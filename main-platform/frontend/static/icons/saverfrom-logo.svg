@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9333EA;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Play button shape (triangle with rounded corner on left) -->
+  <path d="M15 10 L15 90 Q15 95 20 92 L85 55 Q92 51 85 47 L20 10 Q15 7 15 10Z" fill="url(#logoGrad)" />
+  <!-- Download arrow inside -->
+  <path d="M38 38 L38 55 L32 55 L50 72 L68 55 L62 55 L62 38 Z" fill="white" opacity="0.95"/>
+</svg>

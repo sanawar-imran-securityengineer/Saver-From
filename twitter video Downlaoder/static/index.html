@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="XSave — Free Twitter & X Video Downloader. Download Twitter videos, reels, and GIFs in HD 1080p, 720p MP4 or MP3. Fast, free, no login required." />
+  <meta name="theme-color" content="#ffffff" />
+  <title>XSave — Twitter (X) Video Downloader | Free HD MP4 & MP3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<!-- ── Toast container ─────────────────────────────────────────────────────── -->
+<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="#home" class="logo-link" aria-label="XSave home">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </div>
+      <span class="logo-text">X<span class="logo-accent">Save</span></span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Main navigation">
+      <a href="#home" data-i18n="nav_home">Home</a>
+      <a href="#how-it-works" data-i18n="nav_how">How it works</a>
+      <a href="#safety" data-i18n="nav_safety">Safety</a>
+      <a href="#faq" data-i18n="nav_faq">FAQ</a>
+    </nav>
+
+    <div class="header-right">
+      <!-- Language switcher -->
+      <div class="lang-switcher" id="lang-switcher">
+        <button class="lang-btn" id="lang-btn" aria-label="Switch language" aria-expanded="false" aria-controls="lang-menu">
+          <span id="lang-flag">🇺🇸</span>
+          <span id="lang-code">EN</span>
+          <svg viewBox="0 0 16 16" fill="none" width="12" height="12"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="lang-menu" id="lang-menu" role="listbox" aria-label="Language selection">
+          <button role="option" class="lang-option" data-lang="en">🇺🇸 English</button>
+          <button role="option" class="lang-option" data-lang="ur">🇵🇰 اردو</button>
+          <button role="option" class="lang-option" data-lang="ar">🇸🇦 العربية</button>
+          <button role="option" class="lang-option" data-lang="es">🇪🇸 Español</button>
+          <button role="option" class="lang-option" data-lang="fr">🇫🇷 Français</button>
+          <button role="option" class="lang-option" data-lang="de">🇩🇪 Deutsch</button>
+          <button role="option" class="lang-option" data-lang="zh">🇨🇳 中文</button>
+          <button role="option" class="lang-option" data-lang="hi">🇮🇳 हिन्दी</button>
+        </div>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-mobile">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
+    <a href="#home" data-i18n="nav_home">Home</a>
+    <a href="#how-it-works" data-i18n="nav_how">How it works</a>
+    <a href="#safety" data-i18n="nav_safety">Safety</a>
+    <a href="#faq" data-i18n="nav_faq">FAQ</a>
+    <a href="#terms" data-i18n="nav_terms">Terms</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ── Hero ───────────────────────────────────────────────────────────────── -->
+<section id="home" class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      <span data-i18n="badge">Twitter / X Video &amp; GIF Downloader</span>
+    </div>
+
+    <h1 data-i18n="hero_title">Download Twitter (X) Videos<br/><span class="x-accent">Fast, Free &amp; in HD</span></h1>
+    <p class="hero-subtitle" data-i18n="hero_sub">Download public Twitter / X videos, reels, and GIFs in 1080p, 720p MP4 or MP3 audio. 100% free, no login or app required.</p>
+
+    <!-- ── Downloader card ─────────────────────────────────────────────── -->
+    <div class="downloader-card" id="downloader-card">
+
+      <!-- Input row -->
+      <div class="input-row">
+        <div class="url-input-wrap">
+          <div class="x-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
+          <input
+            type="url"
+            id="url-input"
+            placeholder="Paste Twitter or X post URL (e.g. x.com/.../status/...)"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Twitter or X post URL"
+            aria-describedby="url-status"
+            data-i18n-placeholder="url_placeholder"
+          />
+          <button class="paste-btn" id="paste-btn" title="Paste from clipboard" aria-label="Paste from clipboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="2" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span data-i18n="paste">Paste</span>
+          </button>
+        </div>
+
+        <select id="quality-select" aria-label="Output format" class="quality-select">
+          <option value="1080p" data-i18n-opt="fmt_1080">1080p Full HD</option>
+          <option value="720p" selected data-i18n-opt="fmt_720">720p HD</option>
+          <option value="360p" data-i18n-opt="fmt_360">360p SD</option>
+          <option value="mp3" data-i18n-opt="fmt_mp3">MP3 Audio</option>
+        </select>
+
+        <button type="button" class="btn-download" id="download-btn" aria-busy="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="btn_download">Download</span>
+        </button>
+      </div>
+
+      <!-- URL status indicator -->
+      <div id="url-status" class="url-status" aria-live="polite"></div>
+
+      <!-- ── Loading state ──────────────────────────────────────────────── -->
+      <div class="loading-area" id="loading-area" hidden>
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          <p id="loading-msg" data-i18n="loading_msg">Fetching Twitter video...</p>
+          <p class="loading-sub" data-i18n="loading_sub">Converting and preparing your media file.</p>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- ── Tweet Info Preview (Twitter Style Card) ────────────────────────── -->
+      <div class="tweet-preview-card" id="info-preview" hidden>
+        <div class="tweet-card-header">
+          <div class="tweet-avatar">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
+          <div class="tweet-user-meta">
+            <div class="tweet-user-row">
+              <span class="tweet-author-name" id="info-channel">Twitter Post</span>
+              <span class="tweet-verified-badge" title="Verified">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="#1D9BF0">
+                  <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238 1.05 1.273 2.42 2.148 4 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-1.05 2.148-2.42 2.148-4zM9.5 16.5l-4-4 1.41-1.41L9.5 13.67l7.09-7.09L18 8l-8.5 8.5z"/>
+                </svg>
+              </span>
+              <span class="tweet-handle">@x</span>
+            </div>
+            <p class="tweet-text-content" id="info-title"></p>
+          </div>
+        </div>
+
+        <div class="info-thumb-wrap">
+          <img id="info-thumb" src="" alt="Tweet video thumbnail" class="info-thumb" />
+          <div class="info-thumb-overlay">
+            <svg viewBox="0 0 24 24" fill="white" width="40" height="40">
+              <circle cx="12" cy="12" r="11" fill="rgba(15, 20, 25, 0.7)"/>
+              <polygon points="10,8 17,12 10,16" fill="white"/>
+            </svg>
+          </div>
+          <span class="info-duration" id="info-duration"></span>
+        </div>
+
+        <div class="tweet-stats-row">
+          <span class="tweet-stat-item" id="info-views">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span class="stat-text">Views</span>
+          </span>
+          <span class="tweet-stat-item" id="info-likes">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span class="stat-text">Likes</span>
+          </span>
+          <span class="tweet-stat-item">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <span class="stat-text">Reposts</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- ── Error box ────────────────────────────────────────────────── -->
+      <div class="error-box" id="error-box" role="alert" aria-live="assertive" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="error-text"></span>
+      </div>
+
+      <!-- ── Result card ────────────────────────────────────────────────── -->
+      <div class="result-card" id="result-card" hidden aria-live="polite">
+        <div class="result-header">
+          <div class="result-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span data-i18n="result_ready">Your Twitter Media is Ready!</span>
+        </div>
+
+        <div class="result-video-info" id="result-video-info"></div>
+
+        <div class="result-meta-grid" id="result-meta-grid"></div>
+
+        <div class="result-actions">
+          <a href="#" class="btn-result-primary" id="download-file-btn" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="btn_download_file">Download Video</span>
+          </a>
+          <button type="button" class="btn-result-ghost" id="copy-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="9" y="2" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span data-i18n="btn_copy">Copy Link</span>
+          </button>
+          <button type="button" class="btn-result-ghost" id="start-another-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span data-i18n="btn_another">Download Another</span>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /downloader-card -->
+
+    <!-- Micro notice -->
+    <p class="hero-legal" data-i18n="hero_legal">
+      For publicly accessible posts you have rights or permission to view. Compliant with copyright laws and platform terms.
+    </p>
+  </div>
+</section>
+
+<!-- ── Format chips ────────────────────────────────────────────────────────── -->
+<section class="formats-strip">
+  <div class="container">
+    <div class="format-chips">
+      <div class="format-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+        <div>
+          <strong>1080p Full HD</strong>
+          <span>Highest Quality MP4</span>
+        </div>
+      </div>
+      <div class="format-chip featured">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+        <div>
+          <strong>720p HD</strong>
+          <span>Fast &amp; Crisp Video</span>
+        </div>
+        <span class="chip-badge">Popular</span>
+      </div>
+      <div class="format-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+        <div>
+          <strong>360p SD</strong>
+          <span>Compact File Size</span>
+        </div>
+      </div>
+      <div class="format-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <div>
+          <strong>MP3 Audio</strong>
+          <span>Soundtrack &amp; Voice</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ────────────────────────────────────────────────────────── -->
+<section id="how-it-works" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2 data-i18n="how_title">How to Download Twitter (X) Videos</h2>
+      <p data-i18n="how_sub">Three quick steps to save any video, GIF, or reel to your device.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <h3 data-i18n="step1_title">Copy Tweet Link</h3>
+        <p data-i18n="step1_desc">Open X or Twitter, click the <strong>Share</strong> button on any tweet or video post, and select <strong>Copy Link</strong>.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        </div>
+        <h3 data-i18n="step2_title">Paste &amp; Pick Quality</h3>
+        <p data-i18n="step2_desc">Paste the link into the search bar above and pick your desired resolution: 1080p, 720p, 360p MP4, or MP3 audio.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <h3 data-i18n="step3_title">Download Video</h3>
+        <p data-i18n="step3_desc">Click <strong>Download</strong>. Your HD video or GIF is prepared and saved directly to your phone or computer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Safety ──────────────────────────────────────────────────────────────── -->
+<section id="safety" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2 data-i18n="safety_title">Why Choose XSave</h2>
+      <p data-i18n="safety_sub">Safe, private, fast, and engineered with modern web standards.</p>
+    </div>
+    <div class="safety-grid">
+      <div class="safety-card">
+        <div class="safety-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <h4 data-i18n="s1_title">Public Posts Only</h4>
+          <p data-i18n="s1_desc">Only publicly visible Twitter and X posts. No private, protected, or restricted content.</p>
+        </div>
+      </div>
+      <div class="safety-card">
+        <div class="safety-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h4 data-i18n="s2_title">No Login Required</h4>
+          <p data-i18n="s2_desc">No passwords, Twitter authentication, cookies, or account connections ever needed.</p>
+        </div>
+      </div>
+      <div class="safety-card">
+        <div class="safety-icon black">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+        <div>
+          <h4 data-i18n="s3_title">Auto-Delete in 30 Min</h4>
+          <p data-i18n="s3_desc">Downloaded media files are automatically erased from our servers within 30 minutes.</p>
+        </div>
+      </div>
+      <div class="safety-card">
+        <div class="safety-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <h4 data-i18n="s4_title">Lightning Fast Caching</h4>
+          <p data-i18n="s4_desc">Multi-layer in-memory caching serves popular videos in split seconds with minimal wait time.</p>
+        </div>
+      </div>
+      <div class="safety-card">
+        <div class="safety-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <div>
+          <h4 data-i18n="s5_title">MP4 &amp; MP3 Extractor</h4>
+          <p data-i18n="s5_desc">Easily extract high-bitrate audio from Twitter spaces, speeches, or clips as MP3 files.</p>
+        </div>
+      </div>
+      <div class="safety-card">
+        <div class="safety-icon black">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div>
+          <h4 data-i18n="s6_title">Works on All Devices</h4>
+          <p data-i18n="s6_desc">Responsive and optimized for Safari on iOS, Chrome on Android, Windows, Mac, and Linux.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ─────────────────────────────────────────────────────────────────── -->
+<section id="faq" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2 data-i18n="faq_title">Frequently Asked Questions</h2>
+      <p data-i18n="faq_sub">Everything you need to know about downloading Twitter (X) videos.</p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span data-i18n="faq_q1">How do I get the video link from Twitter / X?</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <p class="faq-a" data-i18n="faq_a1">On the Twitter (X) app or website, locate the post containing the video. Click or tap the "Share" button beneath the post, then choose "Copy link". Paste this link into our search box above.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span data-i18n="faq_q2">Can I download GIFs from Twitter (X)?</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <p class="faq-a" data-i18n="faq_a2">Yes! Twitter encodes GIFs as looping MP4 videos. When you download a Twitter GIF with XSave, you get an ultra-high quality MP4 that plays seamlessly on all devices.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span data-i18n="faq_q3">Do I need an account or software installation?</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <p class="faq-a" data-i18n="faq_a3">No. XSave is 100% web-based. You don't need to sign in, create an account, or install browser extensions or third-party apps.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span data-i18n="faq_q4">Can I download videos from private Twitter accounts?</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <p class="faq-a" data-i18n="faq_a4">No. In order to protect user privacy and respect platform terms, XSave only downloads publicly accessible tweets and posts.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span data-i18n="faq_q5">What video resolutions are available?</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <p class="faq-a" data-i18n="faq_a5">You can download in 1080p Full HD, 720p HD, 360p standard quality, or pure MP3 audio extracted directly from the video.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo-link">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
+          <span class="logo-text">X<span class="logo-accent">Save</span></span>
+        </div>
+        <p class="footer-tagline" data-i18n="footer_tagline">Fast, Free Twitter (X) Video &amp; GIF Downloader</p>
+      </div>
+      <div class="footer-links">
+        <a href="#home" data-i18n="nav_home">Home</a>
+        <a href="#how-it-works" data-i18n="nav_how">How it works</a>
+        <a href="#safety" data-i18n="nav_safety">Safety</a>
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="copyright-notice">
+        Disclaimer: XSave is an independent utility and is not affiliated, endorsed, or associated with Twitter or X Corp. All trademarks belong to their respective owners.
+      </p>
+      <p class="copyright-year">&copy; <span id="year">2026</span> XSave. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="/app.js" defer></script>
+</body>
+</html>

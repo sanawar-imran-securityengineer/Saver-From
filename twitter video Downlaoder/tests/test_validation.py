@@ -1,0 +1,96 @@
+import pytest
+from app.services.validation import validate_url
+
+
+class TestUrlValidation:
+    def test_empty_url(self):
+        valid, msg = validate_url("")
+        assert not valid
+        assert msg is not None
+
+    def test_none_url(self):
+        valid, msg = validate_url(None)
+        assert not valid
+        assert msg is not None
+
+    def test_whitespace_only(self):
+        valid, msg = validate_url("   ")
+        assert not valid
+        assert msg is not None
+
+    def test_valid_watch_url(self):
+        valid, msg = validate_url("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        assert valid
+        assert msg is None
+
+    def test_valid_short_url(self):
+        valid, msg = validate_url("https://youtu.be/dQw4w9WgXcQ")
+        assert valid
+        assert msg is None
+
+    def test_valid_shorts_url(self):
+        valid, msg = validate_url("https://www.youtube.com/shorts/abc123")
+        assert valid
+        assert msg is None
+
+    def test_valid_no_www(self):
+        valid, msg = validate_url("https://youtube.com/watch?v=dQw4w9WgXcQ")
+        assert valid
+        assert msg is None
+
+    def test_reject_non_youtube(self):
+        valid, msg = validate_url("https://vimeo.com/watch?v=abc")
+        assert not valid
+        assert "not supported" in msg.lower()
+
+    def test_reject_playlist(self):
+        valid, msg = validate_url("https://www.youtube.com/watch?v=abc&list=PL123")
+        assert not valid
+        assert "playlist" in msg.lower()
+
+    def test_reject_ftp_scheme(self):
+        valid, msg = validate_url("ftp://youtube.com/watch?v=abc")
+        assert not valid
+
+    def test_reject_no_scheme(self):
+        valid, msg = validate_url("youtube.com/watch?v=abc")
+        assert not valid
+
+    def test_reject_excessively_long(self):
+        valid, msg = validate_url("https://www.youtube.com/watch?v=abc&" + "x" * 2100)
+        assert not valid
+
+    def test_reject_watch_without_v(self):
+        valid, msg = validate_url("https://www.youtube.com/watch")
+        assert not valid
+
+    def test_reject_youtube_be_without_id(self):
+        valid, msg = validate_url("https://youtu.be/")
+        assert not valid
+
+    def test_reject_random_path(self):
+        valid, msg = validate_url("https://www.youtube.com/random")
+        assert not valid
+
+    def test_reject_google_domain(self):
+        valid, msg = validate_url("https://google.com/watch?v=abc")
+        assert not valid
+
+    def test_accept_twitter_url(self):
+        valid, msg = validate_url("https://twitter.com/NASA/status/123456789012345")
+        assert valid
+        assert msg is None
+
+    def test_accept_x_url(self):
+        valid, msg = validate_url("https://x.com/elonmusk/status/17923485723948")
+        assert valid
+        assert msg is None
+
+    def test_accept_x_i_status_url(self):
+        valid, msg = validate_url("https://x.com/i/status/17923485723948")
+        assert valid
+        assert msg is None
+
+    def test_reject_twitter_without_status(self):
+        valid, msg = validate_url("https://x.com/elonmusk")
+        assert not valid

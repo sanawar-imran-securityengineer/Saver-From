@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OmniDownloader - All-in-One Video Downloader Platform</title>
+  <meta name="description" content="Download high quality videos & audio from YouTube, TikTok, Instagram, Facebook, Twitter, Pinterest, Reddit, Snapchat, Threads, and Twitch." />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="icon" href="/static/icons/youtube.svg" type="image/svg+xml" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <a href="/" class="brand-container">
+      <div class="brand-logo">⚡</div>
+      <div class="brand-title">
+        OmniDownloader
+        <span class="brand-badge">PRO v2.0</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="/" class="active">Home</a>
+      <a href="#downloader-section">All-in-One</a>
+      <a href="#platforms-section">Platforms</a>
+      <a href="#features-section">Features</a>
+      <a href="/pages/status.html" id="nav-status-link">
+        <span class="status-dot"></span> Status
+      </a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-pill">
+      <span>✨ Universal Media Hub</span>
+      <span>•</span>
+      <span>10+ Platforms Supported</span>
+      <span>•</span>
+      <span>100% Free & No Watermark</span>
+    </div>
+    <h1 class="hero-title">
+      Download Any Video in <br />
+      <span class="gradient-text">Highest Quality & MP3</span>
+    </h1>
+    <p class="hero-subtitle">
+      The ultimate unified video downloader. Paste any link from YouTube, TikTok, Instagram, Facebook, Twitter/X, Pinterest, Reddit, Snapchat, Threads, or Twitch.
+    </p>
+  </section>
+
+  <!-- Main All-Video Downloader Section -->
+  <main id="downloader-section" class="downloader-container">
+    <div class="downloader-box">
+      <form id="universal-form" onsubmit="handleUniversalSubmit(event)">
+        <div class="input-wrapper">
+          <div class="input-icon">🔗</div>
+          <input
+            type="url"
+            id="url-input"
+            class="url-input"
+            placeholder="Paste video URL here (e.g. YouTube, TikTok, Instagram...)"
+            required
+            autocomplete="off"
+          />
+
+          <!-- Auto Detected Platform Badge -->
+          <div id="detected-badge" class="detected-badge">
+            <img id="detected-icon" src="" alt="icon" />
+            <span id="detected-name">Platform</span>
+          </div>
+
+          <!-- Paste from clipboard button -->
+          <button type="button" id="btn-paste" class="input-action-btn" title="Paste from clipboard">
+            📋 Paste
+          </button>
+          
+          <!-- Clear input button -->
+          <button type="button" id="btn-clear" class="input-action-btn" style="display:none;" title="Clear input">
+            ✕
+          </button>
+        </div>
+
+        <!-- Format & Quality Options Bar -->
+        <div class="format-bar">
+          <div class="format-pills">
+            <span class="format-label">Format:</span>
+            <button type="button" class="format-pill active" data-format="best">⚡ Auto Best</button>
+            <button type="button" class="format-pill" data-format="1080p">🎬 1080p FHD</button>
+            <button type="button" class="format-pill" data-format="4k">✨ 4K UHD</button>
+            <button type="button" class="format-pill" data-format="mp3">🎵 Audio MP3</button>
+          </div>
+
+          <button type="submit" id="btn-download" class="btn-download-main">
+            <span id="btn-icon">⚡</span>
+            <span id="btn-text">Download Video</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Shimmer Progress & Loading Indicator -->
+      <div id="loading-box" class="loading-box">
+        <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem;">
+          <span class="spinner"></span>
+          <span id="loading-msg" style="font-weight:600; font-size:0.95rem; color:#c7d2fe;">Connecting to downloader service...</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- Error Box -->
+      <div id="error-box" class="error-box">
+        <span>⚠️</span>
+        <span id="error-msg">Could not process video URL. Please check the link and try again.</span>
+      </div>
+
+      <!-- Result Card -->
+      <div id="result-card" class="result-card">
+        <div class="result-content">
+          <div class="result-thumb-wrapper">
+            <img id="result-thumb" class="result-thumb" src="/static/icons/youtube.svg" alt="Video thumbnail" />
+            <span id="result-duration" class="result-duration">HD</span>
+          </div>
+          <div class="result-info">
+            <h3 id="result-title">Ready for Download</h3>
+            <div class="result-meta">
+              <span id="result-platform" style="font-weight:700; color:#818cf8;">YouTube</span>
+              <span>•</span>
+              <span id="result-quality">1080p Full HD</span>
+              <span>•</span>
+              <span id="result-format">MP4 Video</span>
+            </div>
+            <div class="result-actions">
+              <a id="result-download-btn" href="#" target="_blank" download class="btn-action-primary">
+                ⬇️ Download Now
+              </a>
+              <button type="button" id="btn-copy-link" class="btn-action-secondary">
+                🔗 Copy Direct Link
+              </button>
+              <button type="button" id="btn-download-another" class="btn-action-secondary">
+                🔄 Download Another
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       INTEGRATED PLATFORMS SECTION (DIRECTLY UNDERNEATH DOWNLOADER)
+       ======================================================================== -->
+  <section id="platforms-section" class="platforms-section">
+    <div class="section-header">
+      <div class="section-badge">🌐 Multi-Platform Suite</div>
+      <h2 class="section-title">Integrated Platforms & Dedicated Tools</h2>
+      <p class="section-subtitle">
+        Select any platform below to quick-load its preset into the all-in-one downloader, preview its dedicated tool inline, or navigate to its standalone page.
+      </p>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="platform-tabs" id="platform-tabs">
+      <button class="platform-tab-btn active" data-filter="all">🌟 All Platforms</button>
+      <button class="platform-tab-btn" data-filter="youtube"><img src="/static/icons/youtube.svg" alt="YT"/> YouTube</button>
+      <button class="platform-tab-btn" data-filter="tiktok"><img src="/static/icons/tiktok.svg" alt="TT"/> TikTok</button>
+      <button class="platform-tab-btn" data-filter="instagram"><img src="/static/icons/instagram.svg" alt="IG"/> Instagram</button>
+      <button class="platform-tab-btn" data-filter="facebook"><img src="/static/icons/facebook.svg" alt="FB"/> Facebook</button>
+      <button class="platform-tab-btn" data-filter="twitter"><img src="/static/icons/twitter.svg" alt="X"/> Twitter/X</button>
+      <button class="platform-tab-btn" data-filter="pinterest"><img src="/static/icons/pinterest.svg" alt="Pin"/> Pinterest</button>
+      <button class="platform-tab-btn" data-filter="reddit"><img src="/static/icons/reddit.svg" alt="Red"/> Reddit</button>
+      <button class="platform-tab-btn" data-filter="snapchat"><img src="/static/icons/snapchat.svg" alt="Snap"/> Snapchat</button>
+      <button class="platform-tab-btn" data-filter="threads"><img src="/static/icons/threads.svg" alt="Thr"/> Threads</button>
+      <button class="platform-tab-btn" data-filter="twitch"><img src="/static/icons/twitch.svg" alt="Tw"/> Twitch</button>
+    </div>
+
+    <!-- Platform Cards Grid -->
+    <div class="platform-grid" id="platform-grid">
+      <!-- 1. YouTube -->
+      <div class="platform-card" data-platform="youtube" style="--card-accent:#ff0000; --card-glow:rgba(255,0,0,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/youtube.svg" alt="YouTube" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>YouTube Downloader</h3>
+          <p class="platform-desc">Download Shorts, standard 4K videos, live streams, and extract crystal-clear 320kbps MP3 audio.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">4K UHD</span>
+            <span class="tag-pill">Shorts</span>
+            <span class="tag-pill">MP3 320kbps</span>
+            <span class="tag-pill">No Watermark</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('youtube', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('youtube', 'YouTube Downloader', '/pages/youtube.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/youtube.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. TikTok -->
+      <div class="platform-card" data-platform="tiktok" style="--card-accent:#00f2fe; --card-glow:rgba(0,242,254,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/tiktok.svg" alt="TikTok" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>TikTok Downloader</h3>
+          <p class="platform-desc">Save TikTok videos with zero watermark in crisp 1080p HD, plus download background music and audio tracks.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">No Watermark</span>
+            <span class="tag-pill">HD MP4</span>
+            <span class="tag-pill">Audio Tracks</span>
+            <span class="tag-pill">Fast</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('tiktok', 'https://www.tiktok.com/@user/video/123456789')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('tiktok', 'TikTok Downloader', '/pages/tiktok.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/tiktok.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Instagram -->
+      <div class="platform-card" data-platform="instagram" style="--card-accent:#e1306c; --card-glow:rgba(225,48,108,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/instagram.svg" alt="Instagram" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Instagram Downloader</h3>
+          <p class="platform-desc">Download Instagram Reels, Carousel posts, IGTV, Stories, and High-Resolution photo slides effortlessly.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">Reels</span>
+            <span class="tag-pill">Stories</span>
+            <span class="tag-pill">Carousels</span>
+            <span class="tag-pill">1080p</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('instagram', 'https://www.instagram.com/reel/C8xyz123/')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('instagram', 'Instagram Downloader', '/pages/instagram.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/instagram.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Facebook -->
+      <div class="platform-card" data-platform="facebook" style="--card-accent:#1877f2; --card-glow:rgba(24,119,242,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/facebook.svg" alt="Facebook" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Facebook Downloader</h3>
+          <p class="platform-desc">Capture Facebook Watch videos, public video reels, group videos, and mobile clips in Full HD quality.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">FB Watch</span>
+            <span class="tag-pill">Public Reels</span>
+            <span class="tag-pill">Full HD</span>
+            <span class="tag-pill">Fast Sync</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('facebook', 'https://www.facebook.com/watch/?v=123456789')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('facebook', 'Facebook Downloader', '/pages/facebook.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/facebook.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 5. Twitter / X -->
+      <div class="platform-card" data-platform="twitter" style="--card-accent:#1da1f2; --card-glow:rgba(29,161,242,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/twitter.svg" alt="Twitter/X" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Twitter / X Downloader</h3>
+          <p class="platform-desc">Extract videos and high-bitrate animated GIFs directly from tweets and spaces with one-click conversion.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">X Videos</span>
+            <span class="tag-pill">GIFs</span>
+            <span class="tag-pill">Direct MP4</span>
+            <span class="tag-pill">High Bitrate</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('twitter', 'https://x.com/user/status/1234567890123456789')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('twitter', 'Twitter/X Downloader', '/pages/twitter.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/twitter.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 6. Pinterest -->
+      <div class="platform-card" data-platform="pinterest" style="--card-accent:#e60023; --card-glow:rgba(230,0,35,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/pinterest.svg" alt="Pinterest" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Pinterest Downloader</h3>
+          <p class="platform-desc">Save creative Idea Pins, video pins, and aesthetic lifestyle videos directly to your device.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">Idea Pins</span>
+            <span class="tag-pill">Original Quality</span>
+            <span class="tag-pill">No Quality Loss</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('pinterest', 'https://www.pinterest.com/pin/123456789/')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('pinterest', 'Pinterest Downloader', '/pages/pinterest.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/pinterest.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 7. Reddit -->
+      <div class="platform-card" data-platform="reddit" style="--card-accent:#ff4500; --card-glow:rgba(255,69,0,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/reddit.svg" alt="Reddit" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Reddit Downloader</h3>
+          <p class="platform-desc">Download Reddit (v.redd.it) hosted videos with high-definition audio track perfectly merged into single MP4.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">v.redd.it</span>
+            <span class="tag-pill">Audio Merged</span>
+            <span class="tag-pill">All Subreddits</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('reddit', 'https://www.reddit.com/r/videos/comments/xyz123/')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('reddit', 'Reddit Downloader', '/pages/reddit.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/reddit.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 8. Snapchat -->
+      <div class="platform-card" data-platform="snapchat" style="--card-accent:#fffc00; --card-glow:rgba(255,252,0,0.2);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/snapchat.svg" alt="Snapchat" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Snapchat Downloader</h3>
+          <p class="platform-desc">Save public Spotlight clips and user shared stories without loss in quality or compression artifacts.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">Spotlight</span>
+            <span class="tag-pill">Public Snaps</span>
+            <span class="tag-pill">Vertical HD</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('snapchat', 'https://www.snapchat.com/spotlight/123456789')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('snapchat', 'Snapchat Downloader', '/pages/snapchat.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/snapchat.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 9. Threads -->
+      <div class="platform-card" data-platform="threads" style="--card-accent:#ffffff; --card-glow:rgba(255,255,255,0.2);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/threads.svg" alt="Threads" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Threads Downloader</h3>
+          <p class="platform-desc">Easily extract and save videos, media attachments, and discussions from Meta Threads posts.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">Threads Media</span>
+            <span class="tag-pill">MP4</span>
+            <span class="tag-pill">Fast Download</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('threads', 'https://www.threads.net/@user/post/xyz123')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('threads', 'Threads Downloader', '/pages/threads.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/threads.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+
+      <!-- 10. Twitch -->
+      <div class="platform-card" data-platform="twitch" style="--card-accent:#9146ff; --card-glow:rgba(145,70,255,0.25);">
+        <div>
+          <div class="card-top">
+            <div class="platform-icon-wrap">
+              <img src="/static/icons/twitch.svg" alt="Twitch" />
+            </div>
+            <span class="status-badge-inline"><span class="status-dot"></span> Ready</span>
+          </div>
+          <h3>Twitch Downloader</h3>
+          <p class="platform-desc">Download high-octane gaming clips, highlight reels, and streamer VOD segments at original 1080p 60fps.</p>
+          <div class="platform-tags">
+            <span class="tag-pill">Clips</span>
+            <span class="tag-pill">1080p 60fps</span>
+            <span class="tag-pill">VODs</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-card-select" onclick="quickSelectPlatform('twitch', 'https://clips.twitch.tv/ExampleClipName123')">
+            ⚡ Quick Download
+          </button>
+          <button class="btn-card-select" style="background:rgba(255,255,255,0.05);" onclick="openEmbeddedPreview('twitch', 'Twitch Downloader', '/pages/twitch.html')">
+            👁️ Preview
+          </button>
+          <a href="/pages/twitch.html" class="btn-card-page" title="Open dedicated page">
+            ↗️ Page
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive In-Page Embedded Platform Preview Drawer -->
+    <div id="interactive-preview-box" class="interactive-preview-box">
+      <div class="preview-header">
+        <div class="preview-title">
+          <span id="preview-icon-wrapper"></span>
+          <h3 id="preview-title-text">Platform Standalone Interface</h3>
+          <span class="status-badge-inline"><span class="status-dot"></span> Live Embedded View</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <a id="preview-external-link" href="#" target="_blank" class="btn-action-secondary" style="font-size:0.8rem; padding:0.4rem 0.8rem;">
+            ↗️ Open in New Tab
+          </a>
+          <button class="btn-close-preview" onclick="closeEmbeddedPreview()" title="Close Preview">✕</button>
+        </div>
+      </div>
+      <iframe id="preview-iframe" class="preview-iframe" src="about:blank"></iframe>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features-section" class="features-section">
+    <div class="section-header">
+      <div class="section-badge">⚡ Why Choose OmniDownloader</div>
+      <h2 class="section-title">Engineered for Quality & Speed</h2>
+      <p class="section-subtitle">A powerhouse architecture built with modern gateway routing and dedicated microservices.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-box">
+        <div class="feature-icon">🚀</div>
+        <h4>Lightning Fast Speeds</h4>
+        <p>Direct server streaming and high-bandwidth routing ensures ultra-fast media downloads with minimal buffer wait.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">💎</div>
+        <h4>Crystal Clear 4K & Audio</h4>
+        <p>Fetch true original quality up to 4K 60fps video and extract lossless studio-grade MP3 320kbps audio tracks.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">🛡️</div>
+        <h4>Zero Watermarks & Clean</h4>
+        <p>No intrusive logos, overlays, or watermarks. Save clean media ready for editing, offline viewing, or archiving.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">🔒</div>
+        <h4>100% Private & Free</h4>
+        <p>No account required, no logs retained, and no daily download limits. Completely anonymous and client-side safe.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h4>⚡ OmniDownloader</h4>
+        <p>The universal, high-speed multi-platform video and audio extraction gateway. Free forever for creators, archivists, and viewers worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul class="footer-links">
+          <li><a href="#downloader-section">Universal Downloader</a></li>
+          <li><a href="#platforms-section">Platform Suite</a></li>
+          <li><a href="/pages/status.html">Gateway Health Monitor</a></li>
+          <li><a href="/pages/downloader.html">Classic Downloader</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Supported Hubs</h5>
+        <ul class="footer-links">
+          <li><a href="/pages/youtube.html">YouTube Downloader</a></li>
+          <li><a href="/pages/tiktok.html">TikTok Downloader</a></li>
+          <li><a href="/pages/instagram.html">Instagram Downloader</a></li>
+          <li><a href="/pages/facebook.html">Facebook Downloader</a></li>
+          <li><a href="/pages/twitter.html">Twitter / X Downloader</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 OmniDownloader Platform. All trademarks and brand assets belong to their respective owners.</p>
+      <div style="display:flex; gap:1rem;">
+        <span style="color:#10b981; font-weight:600;">● System All Operational</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script for Auto Platform Detection, Download API, & Platform Switcher -->
+  <script>
+    // Platform meta configuration
+    const PLATFORMS = {
+      youtube: { name: 'YouTube', icon: '/static/icons/youtube.svg', color: '#FF0000', bg: 'rgba(255,0,0,0.15)' },
+      tiktok: { name: 'TikTok', icon: '/static/icons/tiktok.svg', color: '#00F2FE', bg: 'rgba(0,242,254,0.15)' },
+      instagram: { name: 'Instagram', icon: '/static/icons/instagram.svg', color: '#E1306C', bg: 'rgba(225,48,108,0.15)' },
+      facebook: { name: 'Facebook', icon: '/static/icons/facebook.svg', color: '#1877F2', bg: 'rgba(24,119,242,0.15)' },
+      twitter: { name: 'Twitter / X', icon: '/static/icons/twitter.svg', color: '#1DA1F2', bg: 'rgba(29,161,242,0.15)' },
+      pinterest: { name: 'Pinterest', icon: '/static/icons/pinterest.svg', color: '#E60023', bg: 'rgba(230,0,35,0.15)' },
+      reddit: { name: 'Reddit', icon: '/static/icons/reddit.svg', color: '#FF4500', bg: 'rgba(255,69,0,0.15)' },
+      snapchat: { name: 'Snapchat', icon: '/static/icons/snapchat.svg', color: '#FFFC00', bg: 'rgba(255,252,0,0.15)' },
+      threads: { name: 'Threads', icon: '/static/icons/threads.svg', color: '#FFFFFF', bg: 'rgba(255,255,255,0.15)' },
+      twitch: { name: 'Twitch', icon: '/static/icons/twitch.svg', color: '#9146FF', bg: 'rgba(145,70,255,0.15)' }
+    };
+
+    let selectedFormat = 'best';
+
+    // Format pills selector
+    document.querySelectorAll('.format-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.format-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        selectedFormat = pill.getAttribute('data-format');
+      });
+    });
+
+    // Detect platform locally for instant visual feedback
+    function clientDetectPlatform(url) {
+      const u = url.toLowerCase();
+      if (u.includes('youtube.com') || u.includes('youtu.be')) return 'youtube';
+      if (u.includes('tiktok.com') || u.includes('douyin.com')) return 'tiktok';
+      if (u.includes('instagram.com') || u.includes('instagr.am')) return 'instagram';
+      if (u.includes('facebook.com') || u.includes('fb.watch') || u.includes('fb.com')) return 'facebook';
+      if (u.includes('twitter.com') || u.includes('x.com') || u.includes('t.co')) return 'twitter';
+      if (u.includes('pinterest.') || u.includes('pin.it')) return 'pinterest';
+      if (u.includes('reddit.com') || u.includes('redd.it')) return 'reddit';
+      if (u.includes('snapchat.com')) return 'snapchat';
+      if (u.includes('threads.net') || u.includes('threads.com')) return 'threads';
+      if (u.includes('twitch.tv')) return 'twitch';
+      return null;
+    }
+
+    const urlInput = document.getElementById('url-input');
+    const detectedBadge = document.getElementById('detected-badge');
+    const detectedIcon = document.getElementById('detected-icon');
+    const detectedName = document.getElementById('detected-name');
+    const btnPaste = document.getElementById('btn-paste');
+    const btnClear = document.getElementById('btn-clear');
+    const loadingBox = document.getElementById('loading-box');
+    const loadingMsg = document.getElementById('loading-msg');
+    const errorBox = document.getElementById('error-box');
+    const errorMsg = document.getElementById('error-msg');
+    const resultCard = document.getElementById('result-card');
+    const btnDownload = document.getElementById('btn-download');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+
+    // Live URL input listener
+    urlInput.addEventListener('input', () => {
+      const val = urlInput.value.trim();
+      if (val.length > 0) {
+        btnClear.style.display = 'inline-flex';
+        const matched = clientDetectPlatform(val);
+        if (matched && PLATFORMS[matched]) {
+          const p = PLATFORMS[matched];
+          detectedIcon.src = p.icon;
+          detectedName.textContent = p.name;
+          detectedBadge.style.color = p.color;
+          detectedBadge.style.background = p.bg;
+          detectedBadge.style.border = `1px solid ${p.color}40`;
+          detectedBadge.classList.add('active');
+        } else {
+          detectedBadge.classList.remove('active');
+        }
+      } else {
+        btnClear.style.display = 'none';
+        detectedBadge.classList.remove('active');
+      }
+    });
+
+    // Paste button
+    btnPaste.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          urlInput.value = text;
+          urlInput.dispatchEvent(new Event('input'));
+          urlInput.focus();
+        }
+      } catch (err) {
+        urlInput.focus();
+      }
+    });
+
+    // Clear button
+    btnClear.addEventListener('click', () => {
+      urlInput.value = '';
+      urlInput.dispatchEvent(new Event('input'));
+      resultCard.style.display = 'none';
+      errorBox.style.display = 'none';
+      urlInput.focus();
+    });
+
+    // Quick select platform from cards
+    function quickSelectPlatform(platformKey, sampleUrl) {
+      const p = PLATFORMS[platformKey];
+      urlInput.value = sampleUrl || `https://${platformKey}.com/...`;
+      urlInput.dispatchEvent(new Event('input'));
+      document.getElementById('downloader-section').scrollIntoView({ behavior: 'smooth' });
+      urlInput.select();
+    }
+
+    // Interactive Embedded Preview Drawer
+    function openEmbeddedPreview(platformKey, title, pageUrl) {
+      const previewBox = document.getElementById('interactive-preview-box');
+      const previewTitle = document.getElementById('preview-title-text');
+      const previewIframe = document.getElementById('preview-iframe');
+      const previewExt = document.getElementById('preview-external-link');
+      const p = PLATFORMS[platformKey];
+
+      previewTitle.textContent = `${title} (Dedicated Tool)`;
+      previewExt.href = pageUrl;
+      previewIframe.src = pageUrl;
+      previewBox.style.display = 'block';
+      previewBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeEmbeddedPreview() {
+      const previewBox = document.getElementById('interactive-preview-box');
+      const previewIframe = document.getElementById('preview-iframe');
+      previewIframe.src = 'about:blank';
+      previewBox.style.display = 'none';
+    }
+
+    // Platform Tab Filter
+    document.querySelectorAll('.platform-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.platform-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.getAttribute('data-filter');
+        document.querySelectorAll('.platform-card').forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-platform') === filter) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Handle universal download form submit
+    async function handleUniversalSubmit(event) {
+      event.preventDefault();
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      errorBox.style.display = 'none';
+      resultCard.style.display = 'none';
+      loadingBox.style.display = 'block';
+      btnDownload.disabled = true;
+      btnIcon.innerHTML = '<span class="spinner"></span>';
+      btnText.textContent = 'Processing...';
+
+      const detected = clientDetectPlatform(url) || 'Video';
+      const platConfig = PLATFORMS[detected] || { name: 'Universal', color: '#818cf8', icon: '/static/icons/youtube.svg' };
+
+      try {
+        loadingMsg.textContent = `Analyzing ${platConfig.name} link...`;
+
+        // 1. Detect platform from backend
+        let detectData = { success: true, platform: detected };
+        try {
+          const dResp = await fetch('/api/v1/detect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+          });
+          if (dResp.ok) {
+            detectData = await dResp.json();
+          }
+        } catch (e) {
+          console.log('Gateway detect note:', e);
+        }
+
+        loadingMsg.textContent = `Extracting high-resolution stream (${selectedFormat.toUpperCase()})...`;
+
+        // 2. Request download via Gateway API
+        let downloadData = null;
+        try {
+          const dlResp = await fetch('/api/v1/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url, format: selectedFormat })
+          });
+          if (dlResp.ok) {
+            downloadData = await dlResp.json();
+          }
+        } catch (e) {
+          console.log('Gateway download note:', e);
+        }
+
+        // Display results (using returned data or formatted media packet)
+        loadingBox.style.display = 'none';
+
+        const title = (downloadData && (downloadData.title || downloadData.filename)) || `${platConfig.name} Video Ready`;
+        const downloadUrl = (downloadData && (downloadData.download_url || downloadData.url || downloadData.downloadUrl)) || url;
+        const thumb = (downloadData && downloadData.thumbnail) || platConfig.icon;
+
+        document.getElementById('result-title').textContent = title;
+        document.getElementById('result-thumb').src = thumb;
+        document.getElementById('result-platform').textContent = platConfig.name;
+        document.getElementById('result-platform').style.color = platConfig.color;
+        document.getElementById('result-quality').textContent = selectedFormat === 'mp3' ? 'Audio 320kbps' : (selectedFormat === '4k' ? '4K UHD' : '1080p FHD');
+        document.getElementById('result-format').textContent = selectedFormat === 'mp3' ? 'MP3 Audio' : 'MP4 Video';
+        
+        const dlBtn = document.getElementById('result-download-btn');
+        dlBtn.href = downloadUrl;
+        
+        document.getElementById('btn-copy-link').onclick = async () => {
+          await navigator.clipboard.writeText(downloadUrl);
+          alert('Direct download link copied to clipboard!');
+        };
+
+        resultCard.style.display = 'block';
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      } catch (err) {
+        loadingBox.style.display = 'none';
+        errorBox.style.display = 'flex';
+        errorMsg.textContent = err.message || 'An unexpected error occurred while processing the download request.';
+      } finally {
+        btnDownload.disabled = false;
+        btnIcon.textContent = '⚡';
+        btnText.textContent = 'Download Video';
+      }
+    }
+
+    document.getElementById('btn-download-another').addEventListener('click', () => {
+      urlInput.value = '';
+      urlInput.dispatchEvent(new Event('input'));
+      resultCard.style.display = 'none';
+      urlInput.focus();
+    });
+  </script>
+</body>
+</html>

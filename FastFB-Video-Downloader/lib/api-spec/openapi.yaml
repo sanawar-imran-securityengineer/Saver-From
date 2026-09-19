@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: facebook
+    description: Facebook video extraction and downloads
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /facebook/info:
+    post:
+      operationId: getFacebookVideoInfo
+      tags: [facebook]
+      summary: Inspect a Facebook video
+      description: Extracts metadata and available MP4 qualities without downloading the video.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FacebookVideoInput"
+      responses:
+        "200":
+          description: Video metadata and available qualities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FacebookVideoInfo"
+        "400":
+          description: Invalid URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Facebook could not be extracted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /facebook/download:
+    post:
+      operationId: downloadFacebookVideo
+      tags: [facebook]
+      summary: Download a Facebook video
+      description: Proxies the selected video quality to the browser as an attachment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FacebookDownloadInput"
+      responses:
+        "200":
+          description: Video file
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid URL or format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Facebook could not be downloaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    FacebookVideoInput:
+      type: object
+      properties:
+        url:
+          type: string
+          minLength: 1
+      required:
+        - url
+    FacebookDownloadInput:
+      type: object
+      properties:
+        url:
+          type: string
+          minLength: 1
+        formatId:
+          type: ["string", "null"]
+      required:
+        - url
+    FacebookVideoFormat:
+      type: object
+      properties:
+        formatId:
+          type: string
+        label:
+          type: string
+        height:
+          type: ["integer", "null"]
+        filesize:
+          type: ["integer", "null"]
+        filesizeReadable:
+          type: ["string", "null"]
+        ext:
+          type: string
+      required:
+        - formatId
+        - label
+        - height
+        - filesize
+        - filesizeReadable
+        - ext
+    FacebookVideoInfo:
+      type: object
+      properties:
+        title:
+          type: string
+        thumbnail:
+          type: ["string", "null"]
+        duration:
+          type: ["integer", "null"]
+        uploader:
+          type: ["string", "null"]
+        formats:
+          type: array
+          items:
+            $ref: "#/components/schemas/FacebookVideoFormat"
+      required:
+        - title
+        - thumbnail
+        - duration
+        - uploader
+        - formats
+

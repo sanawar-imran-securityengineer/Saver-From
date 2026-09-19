@@ -1,0 +1,2 @@
+[functions.download-video]
+verify_jwt = false
