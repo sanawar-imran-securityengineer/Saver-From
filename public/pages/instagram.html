@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Video Downloader Free Without Watermark</title>
+  <meta name="description" content="Download Instagram Reels, videos, stories, and audio in Full HD 1080p with zero watermarks. Fast, secure, and free online Instagram downloader." />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="icon" href="/static/icons/saverfrom-logo.svg" type="image/svg+xml" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://saverfrom.local/" },
+          { "@type": "ListItem", "position": 2, "name": "Downloaders", "item": "https://saverfrom.local/#platforms-section" },
+          { "@type": "ListItem", "position": 3, "name": "Instagram Video Downloader", "item": "https://saverfrom.local/instagram" }
+        ]
+      },
+      {
+        "@type": "Article",
+        "headline": "Instagram Video Downloader Free Without Watermark",
+        "description": "Comprehensive engineering guide to downloading Instagram Reels, videos, carousel clips, and stories in 1080p Full HD without watermarks.",
+        "author": { "@type": "Organization", "name": "SaverFrom Research Team" },
+        "publisher": { "@type": "Organization", "name": "SaverFrom", "logo": { "@type": "ImageObject", "url": "https://saverfrom.local/static/icons/instagram.svg" } },
+        "datePublished": "2026-01-15",
+        "dateModified": "2026-09-19"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can I download Instagram Reels without watermarks?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaverFrom retrieves the original MP4 video stream directly from Instagram CDN servers before any compression or watermarks are added." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need to log into my Instagram account to download?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. SaverFrom never asks for your Instagram login or account password. You can download any public video or Reel anonymously." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the maximum resolution for Instagram video downloads?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Instagram serves Reels and videos at a native maximum resolution of 1080x1920 (1080p vertical Full HD) at 30/60fps." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I save Instagram Reels directly to my iPhone Camera Roll?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Download the MP4 file via Safari, tap Safari's download manager, tap the Share icon, and select 'Save Video' to add it to your Photos app." }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I extract only the audio or background music as an MP3?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Select the 'Audio MP3' format pill before clicking download to extract isolated 320kbps audio from any Reel or video." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <a href="/" class="brand-container">
+      <div class="brand-logo">
+        <img src="/static/icons/saverfrom-logo.svg" alt="SaverFrom" />
+      </div>
+      <div class="brand-title">
+        SaverFrom
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="/">← Universal Downloader</a>
+      <a href="#downloader-box" class="active">Downloader</a>
+      <a href="/youtube">YouTube</a>
+      <a href="/tiktok">TikTok</a>
+      <a href="/facebook">Facebook</a>
+      <a href="/blog">Blog & Guides</a>
+    </nav>
+  </header>
+
+  <!-- Page Hero -->
+  <main class="page-container">
+    <nav class="breadcrumb-nav">
+      <a href="/">Home</a>
+      <span class="breadcrumb-separator">/</span>
+      <a href="/#platforms-section">Downloaders</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Instagram Video Downloader</span>
+    </nav>
+
+    <div class="page-hero">
+      <h1 class="hero-title" style="margin-bottom:0.8rem;">
+        Instagram Video Downloader Free Without Watermark
+      </h1>
+      <p class="hero-subtitle">
+        Download Instagram Reels, IGTV, carousel videos, and stories in Full HD 1080p with zero watermarks and original audio synchronization.
+      </p>
+      <div class="platform-tags" style="justify-content:center;">
+        <span class="tag-pill">Instagram Reels</span>
+        <span class="tag-pill">1080p Full HD</span>
+        <span class="tag-pill">Stories & Highlights</span>
+        <span class="tag-pill">Zero Watermark</span>
+        <span class="tag-pill">High-Speed CDN</span>
+      </div>
+    </div>
+
+    <!-- Interactive Platform Downloader Card -->
+    <div id="downloader-box" class="downloader-box" style="margin-bottom:3rem; border-color:#E1306C40;">
+      <form id="platform-form" onsubmit="handlePlatformSubmit(event)">
+        <div class="input-wrapper" style="border-color:#E1306C50;">
+          <div class="input-icon">
+            <img src="/static/icons/instagram.svg" alt="Instagram" style="width:22px; height:22px;" />
+          </div>
+          <input
+            type="url"
+            id="platform-url-input"
+            class="url-input"
+            placeholder="Paste Instagram Reels, video, or story link here..."
+            required
+            autocomplete="off"
+          />
+          <button type="button" id="btn-paste-plat" class="input-action-btn">📋 Paste</button>
+          <button type="button" id="btn-clear-plat" class="input-action-btn">✕ Clear</button>
+        </div>
+
+        <div class="format-bar">
+          <div class="format-pills">
+            <span class="format-label">Format:</span>
+            <button type="button" class="format-pill active" data-format="best">⚡ Best Quality (HD)</button>
+            <button type="button" class="format-pill" data-format="1080p">🎬 1080p Full HD</button>
+            <button type="button" class="format-pill" data-format="720p">📹 720p HD</button>
+            <button type="button" class="format-pill" data-format="mp3">🎵 Audio MP3</button>
+          </div>
+          <button type="submit" id="btn-submit-plat" class="btn-download-main" style="background:#E1306C;">
+            <span id="btn-icon-plat">⬇️</span>
+            <span id="btn-text-plat">Download Instagram Video</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Loading Box -->
+      <div id="loading-box-plat" class="loading-box">
+        <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem;">
+          <span class="spinner" style="border-top-color:#E1306C;"></span>
+          <span id="loading-msg-plat" style="font-weight:600; color:#E1306C;">Connecting to Instagram extraction gateway...</span>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div id="result-card-plat" class="result-card">
+        <div class="result-content">
+          <div class="result-thumb-wrapper">
+            <img id="res-thumb" class="result-thumb" src="/static/icons/instagram.svg" alt="Thumbnail" />
+            <span class="result-duration">1080p</span>
+          </div>
+          <div class="result-info">
+            <h3 id="res-title">Instagram Video Ready</h3>
+
+            <!-- Multi-Format Options -->
+            <div class="result-format-list" id="res-format-list"></div>
+
+            <div class="result-actions">
+              <a id="res-dl-btn" href="#" target="_blank" download class="btn-action-primary" style="background:#E1306C;">
+                ⬇️ Download Now
+              </a>
+              <button type="button" id="res-another-btn" class="btn-action-secondary" onclick="document.getElementById('btn-clear-plat').click()">🔄 Download Another</button>
+              <a href="/" class="btn-action-secondary">🏠 Universal Hub</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article & SEO Documentation System -->
+    <div class="article-grid-layout">
+      <!-- Main Article Body -->
+      <article class="article-body">
+        <section id="how-to-download">
+          <h2>1. How to Download Instagram Videos and Reels in Full HD</h2>
+          <p>
+            Instagram has evolved from a simple square-photo social network into one of the world's most vibrant video sharing hubs, driven by full-screen <strong>Instagram Reels</strong>, video carousels, and high-production brand clips. Despite this, Instagram's mobile apps and desktop site offer no native button to download and save MP4 video files locally.
+          </p>
+          <p>
+            SaverFrom resolves this by retrieving direct content distribution network (CDN) streams directly from Meta's edge servers. We extract the original, pristine MP4 container at full 1080p resolution without compression, watermarks, or audio sync drift.
+          </p>
+
+          <div class="step-cards-container">
+            <div class="step-card">
+              <span class="step-badge">1</span>
+              <h4>Copy Video Link</h4>
+              <p>In the Instagram app or desktop site, tap the <strong>Paper Plane Share Icon</strong> or the three dots <code>•••</code> on any public Reel or video and select <strong>Copy Link</strong>.</p>
+            </div>
+            <div class="step-card">
+              <span class="step-badge">2</span>
+              <h4>Paste into SaverFrom</h4>
+              <p>Paste the copied link into the text input above. Choose between <strong>Best Quality (HD)</strong>, <strong>1080p Full HD</strong>, or <strong>Audio MP3</strong>.</p>
+            </div>
+            <div class="step-card">
+              <span class="step-badge">3</span>
+              <h4>Save Video Directly</h4>
+              <p>Click <strong>Download Instagram Video</strong>. Within seconds, our system generates a direct high-speed download link saved directly to your device.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="device-walkthrough">
+          <h2>2. Device-Specific Walkthrough: iOS Camera Roll, Android & Desktop</h2>
+
+          <h3>📱 Apple iOS (iPhone & iPad Safari)</h3>
+          <ol>
+            <li>In the Instagram app, tap the <strong>Share</strong> icon on the Reel or video and select <strong>Copy Link</strong>.</li>
+            <li>Open <strong>Safari</strong> on your iPhone and go to <code>saverfrom.local/instagram</code>.</li>
+            <li>Paste your URL into the input field and tap <strong>Download Instagram Video</strong>.</li>
+            <li>Tap <strong>Download Now</strong> on the result card. When prompted with <em>"Do you want to download video.mp4?"</em>, tap <strong>Download</strong>.</li>
+            <li>Tap the blue <strong>Downloads icon</strong> in Safari's address bar.</li>
+            <li>Tap the downloaded MP4, tap the iOS <strong>Share button</strong> (box with upward arrow), and select <strong>Save Video</strong>.</li>
+            <li>The clip will now appear directly inside your iPhone Photos Camera Roll!</li>
+          </ol>
+
+          <h3>🤖 Android (Chrome, Firefox & Samsung Browser)</h3>
+          <ol>
+            <li>In the Instagram app, tap the three dots <code>•••</code> or the share button on the post and tap <strong>Copy link</strong>.</li>
+            <li>Open Chrome on your Android smartphone and navigate to SaverFrom.</li>
+            <li>Paste the link and tap <strong>Download</strong>. The file will save directly to your <code>/Downloads</code> folder.</li>
+            <li>Open your phone's Gallery or Google Photos to view the video offline.</li>
+          </ol>
+
+          <h3>💻 Desktop (Windows, Mac, Linux)</h3>
+          <ol>
+            <li>Navigate to Instagram.com in your desktop web browser.</li>
+            <li>Click the three dots <code>•••</code> on any post and click <strong>Copy link</strong>, or copy the URL directly from the address bar.</li>
+            <li>Paste the URL into SaverFrom and click download.</li>
+            <li>Your browser will instantly download the standalone MP4 container to your hard drive.</li>
+          </ol>
+        </section>
+
+        <section id="url-types">
+          <h2>3. Supported Instagram URL Variations</h2>
+          <p>
+            Instagram uses several distinct URL formats depending on whether the media is a Reel, a standard feed post, an IGTV video, or a story:
+          </p>
+          <ul>
+            <li><strong>Instagram Reels:</strong> <code>https://www.instagram.com/reel/C8xyz123abc/</code></li>
+            <li><strong>Feed Posts & Carousels:</strong> <code>https://www.instagram.com/p/C9xyz456def/</code></li>
+            <li><strong>IGTV Videos:</strong> <code>https://www.instagram.com/tv/C5xyz789ghi/</code></li>
+            <li><strong>Short Share Links:</strong> <code>https://instagr.am/p/...</code></li>
+            <li><strong>Mobile Web Links:</strong> <code>https://m.instagram.com/reel/...</code></li>
+          </ul>
+        </section>
+
+        <section id="public-vs-private">
+          <h2>4. Public vs Private Account Guidelines</h2>
+          <p>
+            Understanding Instagram privacy settings is essential when using web-based downloaders:
+          </p>
+          <div class="callout-box callout-note">
+            <span class="callout-icon">🔒</span>
+            <div class="callout-content">
+              <strong>Public Accounts Supported</strong>
+              <p>
+                SaverFrom works on all <strong>Public</strong> Instagram profiles, creator accounts, and business pages. If an account is set to Private, Meta requires active authenticated session tokens to view or retrieve media streams. To protect user privacy and account security, SaverFrom never requests or stores your personal Instagram login credentials.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="audio-extraction">
+          <h2>5. Extracting Background Music & Audio (MP3 320kbps)</h2>
+          <p>
+            Many creators use trending background audio, remixed songs, or voiceovers in their Reels. If you only want to save the soundtrack:
+          </p>
+          <ul>
+            <li>Select the <strong>🎵 Audio MP3</strong> format pill above before submitting your link.</li>
+            <li>SaverFrom isolates the stereo audio stream and encapsulates it into a high-bitrate 320kbps MP3 file.</li>
+            <li>The audio track is completely free of video overhead, perfect for listening on music players or using in personal creative projects.</li>
+          </ul>
+        </section>
+
+        <section id="features-overview">
+          <h2>6. Key Advantages of SaverFrom Instagram Downloader</h2>
+          <div class="steps-grid" style="margin-top:1.5rem;">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <h4 style="margin:0.5rem 0; font-size:1.1rem; color:var(--text-main);">Zero Watermarks</h4>
+              <p style="font-size:0.9rem; color:var(--text-secondary);">Direct MP4 extraction without platform overlays, usernames, or logos added to your clips.</p>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <h4 style="margin:0.5rem 0; font-size:1.1rem; color:var(--text-main);">1080p Full HD</h4>
+              <p style="font-size:0.9rem; color:var(--text-secondary);">Preserves the original source bitrate and vertical 1080x1920 video quality from Meta's CDN servers.</p>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <h4 style="margin:0.5rem 0; font-size:1.1rem; color:var(--text-main);">100% Free & Unlimited</h4>
+              <p style="font-size:0.9rem; color:var(--text-secondary);">No subscription fees, no registration, and no daily download limits. Download as many videos as you need.</p>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <h4 style="margin:0.5rem 0; font-size:1.1rem; color:var(--text-main);">All Device Compatibility</h4>
+              <p style="font-size:0.9rem; color:var(--text-secondary);">Works effortlessly on iOS Safari, Android Chrome, Windows, Mac, and Linux without any software installation.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="seo-faq-section" style="margin-top:3rem;">
+          <div class="section-header" style="text-align:left; margin-bottom:1.5rem;">
+            <div class="section-badge">❓ Instagram FAQ</div>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+          </div>
+          <div class="faq-accordion">
+            <details class="faq-item" open>
+              <summary class="faq-question">Can I download Instagram Reels without watermarks?</summary>
+              <div class="faq-answer">
+                <p>Yes. SaverFrom queries Instagram's direct media endpoints to retrieve the unbranded, clean MP4 source video before any overlay or watermark rendering.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Do I need an Instagram account or login to download?</summary>
+              <div class="faq-answer">
+                <p>No. SaverFrom does not require any account credentials or Instagram logins. You can download any public video, reel, or photo with zero authentication.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Does SaverFrom save Instagram videos with sound?</summary>
+              <div class="faq-answer">
+                <p>Yes! Every video and reel is saved with its original stereo audio track fully preserved in synchronization.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Are Instagram downloads free and unlimited?</summary>
+              <div class="faq-answer">
+                <p>Yes. You can download as many Instagram reels, videos, and stories as you want, completely free of charge.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Can I download carousel posts with multiple videos?</summary>
+              <div class="faq-answer">
+                <p>Yes. SaverFrom detects multi-slide carousel posts and extracts the primary video streams for download.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Where are downloaded Instagram videos saved on my phone?</summary>
+              <div class="faq-answer">
+                <p>On Android devices, videos are saved to your default <strong>Downloads</strong> folder and appear in your Gallery. On iOS iPhone, follow our walkthrough above to save the MP4 directly into your Photos Camera Roll.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem;">
+          <img src="/static/icons/saverfrom-logo.svg" alt="SaverFrom" style="width:32px; height:32px;" />
+          <h4 style="margin:0; font-size:1.3rem; font-weight:800; color:var(--text-main);">SaverFrom</h4>
+        </div>
+        <p>The universal high-speed video and audio downloader. Free forever for creators, archivists, and viewers worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Popular Platforms</h5>
+        <ul class="footer-links">
+          <li><a href="/youtube">YouTube Downloader</a></li>
+          <li><a href="/tiktok">TikTok Downloader</a></li>
+          <li><a href="/instagram">Instagram Downloader</a></li>
+          <li><a href="/facebook">Facebook Downloader</a></li>
+          <li><a href="/twitter">Twitter / X Downloader</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul class="footer-links">
+          <li><a href="/blog">Blog & Guides</a></li>
+          <li><a href="/about">About SaverFrom</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/terms-of-service">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 SaverFrom. All trademarks belong to their respective owners.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    let platFormat = 'best';
+    const urlIn = document.getElementById('platform-url-input');
+    const loadingBox = document.getElementById('loading-box-plat');
+    const resultCard = document.getElementById('result-card-plat');
+    const btnSubmit = document.getElementById('btn-submit-plat');
+
+    // Format selection pills
+    document.querySelectorAll('.format-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.format-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        platFormat = pill.getAttribute('data-format') || 'best';
+      });
+    });
+
+    // Paste button
+    document.getElementById('btn-paste-plat').addEventListener('click', async () => {
+      try {
+        const txt = await navigator.clipboard.readText();
+        if (txt) {
+          urlIn.value = txt;
+          urlIn.focus();
+        }
+      } catch (e) {
+        urlIn.focus();
+      }
+    });
+
+    // Clear button
+    document.getElementById('btn-clear-plat').addEventListener('click', () => {
+      urlIn.value = '';
+      resultCard.style.display = 'none';
+      urlIn.focus();
+    });
+
+    // Handle Form Submit
+    async function handlePlatformSubmit(e) {
+      e.preventDefault();
+      const url = urlIn.value.trim();
+      if (!url) return;
+
+      loadingBox.style.display = 'block';
+      resultCard.style.display = 'none';
+      btnSubmit.disabled = true;
+
+      try {
+        const resp = await fetch('/api/v1/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, format: platFormat })
+        });
+        let data = null;
+        if (resp.ok) {
+          data = await resp.json();
+        } else {
+          data = await resp.json().catch(() => ({}));
+        }
+
+        loadingBox.style.display = 'none';
+        const title = (data && (data.title || data.filename)) || 'Instagram Video Ready';
+        const rawDlUrl = (data && (data.download_url || data.url)) || url;
+        const filename = (data && data.filename) || 'instagram_video.mp4';
+        const thumbUrl = (data && data.thumbnail) || '/static/icons/instagram.svg';
+        const quality = (data && data.quality) || (platFormat === 'mp3' ? 'Audio 320kbps' : platFormat === '1080p' ? '1080p Full HD' : 'Best Quality (HD)');
+        const fmt = (data && data.format) || (platFormat === 'mp3' ? 'MP3 Audio' : 'MP4 Video');
+        const duration = (data && data.duration) || 'HD';
+
+        // Direct Download Link via Streaming Proxy
+        const directDlUrl = '/api/v1/proxy-download?url=' + encodeURIComponent(rawDlUrl) + '&filename=' + encodeURIComponent(filename);
+
+        const decodeHtml = (str) => {
+          const txt = document.createElement('textarea');
+          txt.innerHTML = str || '';
+          return txt.value;
+        };
+
+        document.getElementById('res-title').textContent = decodeHtml(title);
+        
+        const dlBtn = document.getElementById('res-dl-btn');
+        dlBtn.href = directDlUrl;
+        dlBtn.setAttribute('download', filename);
+
+        const thumbEl = document.getElementById('res-thumb');
+        if (thumbEl) {
+          thumbEl.src = thumbUrl;
+          thumbEl.onerror = function() { this.src = '/static/icons/instagram.svg'; };
+        }
+        const durEl = document.querySelector('.result-duration');
+        if (durEl && duration) durEl.textContent = duration;
+
+        // Multi-format options
+        const formatListEl = document.getElementById('res-format-list');
+        if (formatListEl) {
+          formatListEl.innerHTML = '';
+          const formats = (data && data.formats) || [
+            { format_id: '1080p', label: '1080p Full HD', quality: '1080p FHD', ext: 'mp4', proxy_url: directDlUrl },
+            { format_id: '720p', label: '720p HD', quality: '720p HD', ext: 'mp4', proxy_url: directDlUrl },
+            { format_id: 'mp3', label: 'Audio MP3 (320kbps)', quality: 'MP3', ext: 'mp3', proxy_url: directDlUrl }
+          ];
+
+          formats.forEach(f => {
+            const row = document.createElement('div');
+            row.className = 'format-dl-row';
+            const isAudio = f.ext === 'mp3' || f.format_id === 'mp3';
+            const icon = isAudio ? '🎵' : (f.format_id === '1080p' ? '🎬' : '📹');
+            const dlLink = f.proxy_url || `/api/v1/proxy-download?url=${encodeURIComponent(f.url || rawDlUrl)}&filename=${encodeURIComponent((filename || 'instagram').replace(/\.[^.]+$/, '') + '.' + f.ext)}`;
+            
+            const cleanLabel = (f.label || f.quality || 'Video')
+              .replace(/\s*\((?:mp4|mp3)\)/gi, '')
+              .replace(/\s*video\s*/gi, ' ')
+              .trim();
+            const badgeText = isAudio ? 'MP3' : 'MP4';
+
+            row.innerHTML = `
+              <div class="format-dl-info">
+                <span>${icon}</span>
+                <span>${cleanLabel}</span>
+                <span class="format-dl-badge ${isAudio ? 'audio-badge' : ''}">${badgeText}</span>
+              </div>
+              <a href="${dlLink}" download class="btn-format-download ${isAudio ? 'audio-btn' : ''}" style="${!isAudio ? 'background:#E1306C;' : ''}">
+                ⬇️ Download
+              </a>
+            `;
+            formatListEl.appendChild(row);
+          });
+        }
+
+        resultCard.style.display = 'block';
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (err) {
+        loadingBox.style.display = 'none';
+      } finally {
+        btnSubmit.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

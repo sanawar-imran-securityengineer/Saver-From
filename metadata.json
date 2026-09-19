@@ -1,0 +1,6 @@
+{
+  "name": "SaverFrom",
+  "description": "Multi-platform social media video downloader gateway and suite for YouTube, TikTok, Instagram, Facebook, Twitter, and more.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
