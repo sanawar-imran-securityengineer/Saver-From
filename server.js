@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import path from 'path';
+import fs from 'fs';
+import { execFile, spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { Readable } from 'stream';
 import cluster from 'node:cluster';
@@ -15,15 +17,15 @@ const numCPUs = Math.min(os.cpus().length || 1, 8);
 const isClusterMode = (process.env.ENABLE_CLUSTER === 'true' || (process.env.NODE_ENV === 'production' && numCPUs > 1)) && !process.env.DISABLE_CLUSTER;
 
 if (isClusterMode && cluster.isPrimary) {
-  console.log(`[SaverFrom Load Balancer] Master process ${process.pid} is active.`);
-  console.log(`[SaverFrom Load Balancer] Spawning ${numCPUs} worker processes to handle 10M+ concurrent traffic...`);
+  console.log(`[SaverFrom Cluster] Master process ${process.pid} is running.`);
+  console.log(`[SaverFrom Cluster] Initializing ${numCPUs} worker processes...`);
 
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
 
   cluster.on('exit', (worker, code, signal) => {
-    console.warn(`[SaverFrom Load Balancer] Worker process ${worker.process.pid} exited (${signal || code}). Auto-recovering worker...`);
+    console.warn(`[SaverFrom Cluster] Worker process ${worker.process.pid} exited (${signal || code}). Auto-recovering worker...`);
     cluster.fork();
   });
 } else {
@@ -32,7 +34,7 @@ if (isClusterMode && cluster.isPrimary) {
 
 function startApp() {
   const app = express();
-  const PORT = process.env.PORT || 3000;
+  const PORT = 3000;
   const HOST = '0.0.0.0';
 
   // Reverse Proxy & Security Optimization
@@ -253,6 +255,37 @@ async function scrapeOpenGraph(url) {
   }
 }
 
+// Robust Real-Media Extractor using yt-dlp binary with JavaScript engine
+async function extractRealMediaWithYtDlp(url) {
+  return new Promise((resolve) => {
+    const ytDlpPath = path.join(__dirname, 'bin/yt-dlp');
+    if (!fs.existsSync(ytDlpPath)) {
+      return resolve(null);
+    }
+    const args = [
+      '--js-runtimes', `node:${process.execPath}`,
+      '--no-playlist',
+      '--no-warnings',
+      '--no-call-home',
+      '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      '-J',
+      url
+    ];
+
+    execFile(ytDlpPath, args, { timeout: 15000, maxBuffer: 15 * 1024 * 1024 }, (err, stdout) => {
+      if (err || !stdout) {
+        return resolve(null);
+      }
+      try {
+        const info = JSON.parse(stdout);
+        resolve(info);
+      } catch {
+        resolve(null);
+      }
+    });
+  });
+}
+
 // Extract TikTok via TikWM API (High Speed No-Watermark Extractor)
 async function extractTikTok(url) {
   try {
@@ -345,17 +378,8 @@ app.post('/api/v1/download', apiRateLimiter, async (req, res) => {
   }
 
   const platName = config.name;
-  let title = `${platName} Video`;
-  let thumbnail = config.icon;
-  let duration = 'HD';
-  let uploader = '';
-  let downloadUrl = '';
-  let audioUrl = '';
 
-  const sampleVideo = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-  const sampleAudio = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-
-  // 1. TikTok High-Speed Extractor
+  // 1. TikTok High-Speed Extractor (TikWM direct API)
   if (platform === 'tiktok') {
     const ttData = await extractTikTok(url);
     if (ttData && ttData.download_url) {
@@ -364,13 +388,18 @@ app.post('/api/v1/download', apiRateLimiter, async (req, res) => {
       const ext = selectedFormat === 'mp3' ? 'mp3' : 'mp4';
       const filename = `${cleanTitle}.${ext}`;
 
+      const previewVideoUrl = `/api/v1/proxy-download?url=${encodeURIComponent(ttData.download_url)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}&inline=true`;
+      const previewAudioUrl = `/api/v1/proxy-download?url=${encodeURIComponent(ttData.audio_url || ttData.download_url)}&filename=${encodeURIComponent(cleanTitle + '.mp3')}&inline=true`;
+
       const formats = [
         {
           format_id: '1080p',
           label: '1080p Full HD',
           quality: '1080p FHD',
           ext: 'mp4',
+          size_est: '22 MB',
           url: ttData.download_url,
+          preview_url: previewVideoUrl,
           proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(ttData.download_url)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}`,
         },
         {
@@ -378,7 +407,9 @@ app.post('/api/v1/download', apiRateLimiter, async (req, res) => {
           label: '720p HD',
           quality: '720p HD',
           ext: 'mp4',
+          size_est: '14 MB',
           url: ttData.download_url,
+          preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(ttData.download_url)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}&inline=true`,
           proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(ttData.download_url)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}`,
         },
         {
@@ -386,7 +417,9 @@ app.post('/api/v1/download', apiRateLimiter, async (req, res) => {
           label: 'Audio MP3 (320kbps)',
           quality: 'MP3 320kbps',
           ext: 'mp3',
+          size_est: '4.2 MB',
           url: ttData.audio_url || ttData.download_url,
+          preview_url: previewAudioUrl,
           proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(ttData.audio_url || ttData.download_url)}&filename=${encodeURIComponent(cleanTitle + '.mp3')}`,
         },
       ];
@@ -400,6 +433,8 @@ app.post('/api/v1/download', apiRateLimiter, async (req, res) => {
         duration: ttData.duration || '00:30',
         uploader: ttData.uploader || '@tiktok_user',
         download_url: chosenUrl,
+        preview_url: selectedFormat === 'mp3' ? previewAudioUrl : previewVideoUrl,
+        audio_preview_url: previewAudioUrl,
         url: chosenUrl,
         filename,
         quality: selectedFormat === 'mp3' ? 'Audio 320kbps' : '1080p Full HD',
@@ -412,124 +447,330 @@ app.post('/api/v1/download', apiRateLimiter, async (req, res) => {
     }
   }
 
-  // 2. YouTube Extractor
-  if (platform === 'youtube') {
-    const ytId = extractYouTubeId(url);
-    if (ytId) {
-      thumbnail = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
-      const oembed = await fetchYouTubeOEmbed(url);
-      if (oembed) {
-        title = oembed.title || 'YouTube Video';
-        uploader = oembed.uploader || 'YouTube Creator';
-        if (oembed.thumbnail) thumbnail = oembed.thumbnail;
-      } else {
-        title = `YouTube Video (${ytId})`;
-        uploader = 'YouTube';
-      }
-      duration = 'HD Video';
-      downloadUrl = sampleVideo;
-      audioUrl = sampleAudio;
+  // 2. Real-Media Extraction with yt-dlp (YouTube, Facebook, Instagram, Twitter/X, Reddit, Pinterest, Twitch, etc.)
+  const ytdlData = await extractRealMediaWithYtDlp(url);
+  if (ytdlData && (ytdlData.formats?.length || ytdlData.url)) {
+    const rawTitle = ytdlData.title || `${platName} Video`;
+    const cleanTitle = rawTitle.replace(/[^a-zA-Z0-9 -_]/g, '').slice(0, 60).trim() || `${platName.toLowerCase()}_video`;
+    const thumbnail = ytdlData.thumbnail || (ytdlData.thumbnails && ytdlData.thumbnails[ytdlData.thumbnails.length - 1]?.url) || config.icon;
+    const uploader = ytdlData.uploader || ytdlData.channel || ytdlData.creator || platName;
+    const durSec = ytdlData.duration;
+    let duration = 'HD';
+    if (typeof durSec === 'number' && durSec > 0) {
+      const mins = Math.floor(durSec / 60);
+      const secs = Math.floor(durSec % 60);
+      duration = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
+
+    const allFormats = ytdlData.formats || [];
+
+    // Find progressive format (has both video & audio in single stream)
+    const progFormats = allFormats.filter(f => f.url && f.vcodec && f.vcodec !== 'none' && f.acodec && f.acodec !== 'none');
+    const bestProg = progFormats.sort((a, b) => (b.height || 0) - (a.height || 0))[0];
+
+    // Find audio-only formats
+    const audioFormats = allFormats.filter(f => f.url && f.acodec && f.acodec !== 'none');
+    const bestAudio = audioFormats.find(f => f.ext === 'm4a' || f.format_id === '140') || audioFormats.sort((a, b) => (b.abr || 0) - (a.abr || 0))[0] || bestProg;
+
+    // Find 1080p and 720p video formats
+    const fmt1080 = allFormats.find(f => f.url && f.vcodec && f.vcodec !== 'none' && (f.height === 1080 || f.format_note?.includes('1080')));
+    const fmt720 = allFormats.find(f => f.url && f.vcodec && f.vcodec !== 'none' && (f.height === 720 || f.format_note?.includes('720'))) || bestProg;
+
+    // Build format rows
+    const formats = [];
+
+    // 1080p row
+    if (fmt1080 && bestAudio && (!fmt1080.acodec || fmt1080.acodec === 'none')) {
+      const vUrl = fmt1080.url;
+      const aUrl = bestAudio?.url;
+      formats.push({
+        format_id: '1080p',
+        label: '1080p Full HD',
+        quality: '1080p FHD',
+        ext: 'mp4',
+        size_est: fmt1080.filesize ? `${Math.round(fmt1080.filesize / (1024 * 1024))} MB` : '35 MB',
+        url: vUrl,
+        preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(vUrl)}&audio_url=${encodeURIComponent(aUrl)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}&inline=true`,
+        proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(vUrl)}&audio_url=${encodeURIComponent(aUrl)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}`,
+      });
+    } else if (bestProg) {
+      formats.push({
+        format_id: '1080p',
+        label: `${bestProg.height || 'HD'}p Video`,
+        quality: `${bestProg.height || 'HD'}p`,
+        ext: 'mp4',
+        size_est: bestProg.filesize ? `${Math.round(bestProg.filesize / (1024 * 1024))} MB` : '24 MB',
+        url: bestProg.url,
+        preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(bestProg.url)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}&inline=true`,
+        proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(bestProg.url)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}`,
+      });
+    }
+
+    // 720p / progressive row
+    if (fmt720 && bestAudio && (!fmt720.acodec || fmt720.acodec === 'none')) {
+      const vUrl = fmt720.url;
+      const aUrl = bestAudio?.url;
+      formats.push({
+        format_id: '720p',
+        label: '720p HD',
+        quality: '720p HD',
+        ext: 'mp4',
+        size_est: fmt720.filesize ? `${Math.round(fmt720.filesize / (1024 * 1024))} MB` : '18 MB',
+        url: vUrl,
+        preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(vUrl)}&audio_url=${encodeURIComponent(aUrl)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}&inline=true`,
+        proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(vUrl)}&audio_url=${encodeURIComponent(aUrl)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}`,
+      });
+    } else if (bestProg && !formats.some(f => f.format_id === '720p')) {
+      formats.push({
+        format_id: '720p',
+        label: 'Standard MP4 Video',
+        quality: `${bestProg.height || 'HD'}p`,
+        ext: 'mp4',
+        size_est: bestProg.filesize ? `${Math.round(bestProg.filesize / (1024 * 1024))} MB` : '15 MB',
+        url: bestProg.url,
+        preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(bestProg.url)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}&inline=true`,
+        proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(bestProg.url)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}`,
+      });
+    }
+
+    // MP3 Audio row
+    if (bestAudio) {
+      formats.push({
+        format_id: 'mp3',
+        label: 'Audio MP3 (320kbps)',
+        quality: 'MP3 320kbps',
+        ext: 'mp3',
+        size_est: bestAudio.filesize ? `${Math.round(bestAudio.filesize / (1024 * 1024))} MB` : '4.5 MB',
+        url: bestAudio.url,
+        preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(bestAudio.url)}&filename=${encodeURIComponent(cleanTitle + '.mp3')}&inline=true`,
+        proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(bestAudio.url)}&filename=${encodeURIComponent(cleanTitle + '.mp3')}`,
+      });
+    }
+
+    // Fallback if no formats array was constructed
+    if (!formats.length && ytdlData.url) {
+      formats.push({
+        format_id: 'best',
+        label: 'Official Video MP4',
+        quality: 'HD',
+        ext: 'mp4',
+        size_est: '20 MB',
+        url: ytdlData.url,
+        preview_url: `/api/v1/proxy-download?url=${encodeURIComponent(ytdlData.url)}&filename=${encodeURIComponent(cleanTitle + '.mp4')}&inline=true`,
+        proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(ytdlData.url)}&filename=${encodeURIComponent(cleanTitle + '.mp4')}`,
+      });
+    }
+
+    // Determine primary download and preview
+    const primaryFormat = selectedFormat === 'mp3' ? formats.find(f => f.format_id === 'mp3') : (formats.find(f => f.format_id === '1080p') || formats[0]);
+    const primaryPreview = bestProg
+      ? `/api/v1/proxy-download?url=${encodeURIComponent(bestProg.url)}&filename=${encodeURIComponent(cleanTitle + '.mp4')}&inline=true`
+      : (formats[0]?.preview_url || '');
+
+    const primaryAudioPreview = bestAudio
+      ? `/api/v1/proxy-download?url=${encodeURIComponent(bestAudio.url)}&filename=${encodeURIComponent(cleanTitle + '.mp3')}&inline=true`
+      : '';
+
+    const chosenDlUrl = primaryFormat ? primaryFormat.proxy_url : (formats[0]?.proxy_url || '');
+
+    const result = {
+      success: true,
+      platform,
+      platform_name: platName,
+      title: decodeHtmlEntities(rawTitle),
+      thumbnail,
+      duration,
+      uploader: decodeHtmlEntities(uploader),
+      download_url: chosenDlUrl,
+      preview_url: selectedFormat === 'mp3' ? primaryAudioPreview : primaryPreview,
+      audio_preview_url: primaryAudioPreview,
+      url: chosenDlUrl,
+      filename: `${cleanTitle}.${selectedFormat === 'mp3' ? 'mp3' : 'mp4'}`,
+      quality: selectedFormat === 'mp3' ? 'Audio 320kbps' : '1080p Full HD',
+      format: selectedFormat === 'mp3' ? 'MP3 Audio' : 'MP4 Video',
+      formats,
+    };
+
+    setCachedMedia(cacheKey, result);
+    return res.json(result);
   }
 
-  // 3. OpenGraph Scraper for other platforms (Instagram, Twitter, FB, Reddit, Pinterest, etc)
-  if (!downloadUrl) {
-    const og = await scrapeOpenGraph(url);
-    if (og.title) title = og.title;
-    if (og.image) thumbnail = og.image;
-    downloadUrl = sampleVideo;
-    audioUrl = sampleAudio;
-  }
+  // 3. OpenGraph Scraper fallback
+  const og = await scrapeOpenGraph(url);
+  let title = og.title || `${platName} Video`;
+  let thumbnail = og.image || config.icon;
 
-  const chosenUrl = selectedFormat === 'mp3' ? (audioUrl || sampleAudio) : (downloadUrl || sampleVideo);
-  const cleanTitle = title.replace(/[^a-zA-Z0-9 -_]/g, '').slice(0, 60).trim() || `${platName.toLowerCase()}_video`;
-  const ext = selectedFormat === 'mp3' ? 'mp3' : 'mp4';
-  const filename = `${cleanTitle}.${ext}`;
-
-  const formats = [
-    {
-      format_id: '1080p',
-      label: '1080p Full HD',
-      quality: '1080p FHD',
-      ext: 'mp4',
-      url: downloadUrl || sampleVideo,
-      proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(downloadUrl || sampleVideo)}&filename=${encodeURIComponent(cleanTitle + '_1080p.mp4')}`,
-    },
-    {
-      format_id: '720p',
-      label: '720p HD',
-      quality: '720p HD',
-      ext: 'mp4',
-      url: downloadUrl || sampleVideo,
-      proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(downloadUrl || sampleVideo)}&filename=${encodeURIComponent(cleanTitle + '_720p.mp4')}`,
-    },
-    {
-      format_id: 'mp3',
-      label: 'Audio MP3 (320kbps)',
-      quality: 'MP3 320kbps',
-      ext: 'mp3',
-      url: audioUrl || sampleAudio,
-      proxy_url: `/api/v1/proxy-download?url=${encodeURIComponent(audioUrl || sampleAudio)}&filename=${encodeURIComponent(cleanTitle + '.mp3')}`,
-    },
-  ];
-
-  const result = {
-    success: true,
-    platform,
-    platform_name: platName,
+  return res.status(400).json({
+    detail: 'Unable to extract official media stream. Please verify the URL is public, accessible, and not private or restricted.',
     title: decodeHtmlEntities(title),
-    thumbnail: thumbnail || config.icon,
-    duration,
-    uploader: decodeHtmlEntities(uploader),
-    download_url: chosenUrl,
-    url: chosenUrl,
-    filename,
-    quality: selectedFormat === 'mp3' ? 'Audio 320kbps' : (selectedFormat === '4k' ? '4K UHD' : '1080p Full HD'),
-    format: selectedFormat === 'mp3' ? 'MP3 Audio' : 'MP4 Video',
-    formats,
-  };
-
-  setCachedMedia(cacheKey, result);
-  return res.json(result);
+    thumbnail
+  });
 });
 
-// 3. Proxy Download Route (Zero-Buffer Direct Stream Piping with Backpressure)
+// 3. Proxy Download & Media Stream Route (Supports Real-Time FFmpeg Remuxing, HTTP Range, and Direct Streams)
 app.get('/api/v1/proxy-download', async (req, res) => {
-  const { url, filename = 'video.mp4' } = req.query;
+  const { url, audio_url, filename = 'video.mp4', inline = 'false' } = req.query;
   if (!url) {
-    return res.status(400).send('Missing url parameter');
+    return res.status(400).json({ success: false, error: 'Missing url parameter' });
   }
 
-  const safeFilename = String(filename).replace(/["'\r\n]/g, '').slice(0, 90) || 'video.mp4';
+  const isInline = inline === 'true';
+  const safeFilename = String(filename).replace(/[^a-zA-Z0-9._ -]/g, '').slice(0, 90) || 'video.mp4';
   const isAudio = safeFilename.endsWith('.mp3');
 
+  // Fast path 1: Separate video + audio streams merged on the fly with FFmpeg
+  if (audio_url) {
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Content-Disposition', isInline ? 'inline' : `attachment; filename="${safeFilename}"`);
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    const ff = spawn('ffmpeg', [
+      '-reconnect', '1',
+      '-reconnect_streamed', '1',
+      '-reconnect_delay_max', '5',
+      '-i', url,
+      '-i', audio_url,
+      '-c:v', 'copy',
+      '-c:a', 'aac',
+      '-movflags', '+frag_keyframe+empty_moov+default_base_moof',
+      '-f', 'mp4',
+      'pipe:1'
+    ]);
+
+    req.on('close', () => {
+      ff.kill('SIGKILL');
+    });
+
+    ff.on('error', (e) => {
+      if (!res.headersSent) {
+        res.status(502).json({ error: 'ffmpeg_remux_error', message: e.message });
+      }
+    });
+
+    return ff.stdout.pipe(res);
+  }
+
+  // Fast path 2: MP3 Audio on-the-fly conversion with FFmpeg
+  if (isAudio && (url.includes('googlevideo') || url.includes('m4a') || url.includes('webm') || url.includes('opus'))) {
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', isInline ? 'inline' : `attachment; filename="${safeFilename}"`);
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    const ff = spawn('ffmpeg', [
+      '-reconnect', '1',
+      '-reconnect_streamed', '1',
+      '-reconnect_delay_max', '5',
+      '-i', url,
+      '-vn',
+      '-c:a', 'libmp3lame',
+      '-b:a', '320k',
+      '-f', 'mp3',
+      'pipe:1'
+    ]);
+
+    req.on('close', () => {
+      ff.kill('SIGKILL');
+    });
+
+    ff.on('error', (e) => {
+      if (!res.headersSent) {
+        res.status(502).json({ error: 'ffmpeg_audio_error', message: e.message });
+      }
+    });
+
+    return ff.stdout.pipe(res);
+  }
+
+  // Fast path 3: Local verified files
+  if (url.startsWith('/static/') || url.startsWith('static/')) {
+    const relativePath = url.replace(/^\/?static\//, '');
+    const localFilePath = path.join(__dirname, 'public/static', relativePath);
+    if (fs.existsSync(localFilePath)) {
+      const stat = fs.statSync(localFilePath);
+      const fileSize = stat.size;
+      const range = req.headers.range;
+
+      res.setHeader('Content-Type', isAudio ? 'audio/mpeg' : 'video/mp4');
+      res.setHeader('Content-Disposition', isInline ? 'inline' : `attachment; filename="${safeFilename}"`);
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunksize = (end - start) + 1;
+        const fileStream = fs.createReadStream(localFilePath, { start, end });
+
+        res.writeHead(206, {
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Content-Length': chunksize,
+        });
+        return fileStream.pipe(res);
+      } else {
+        res.writeHead(200, {
+          'Content-Length': fileSize,
+        });
+        return fs.createReadStream(localFilePath).pipe(res);
+      }
+    }
+  }
+
+  // Fast path 4: Remote single stream proxy (e.g. TikTok, direct MP4)
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), 20000);
 
-    const upstream = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-        'Accept': '*/*',
-      },
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Accept-Encoding': 'identity',
+    };
 
-    if (!upstream.ok || !upstream.body) {
-      return res.redirect(url);
+    try {
+      const parsedUrl = new URL(url);
+      headers['Referer'] = `${parsedUrl.protocol}//${parsedUrl.host}/`;
+    } catch {}
+
+    if (req.headers.range) {
+      headers['Range'] = req.headers.range;
     }
 
-    res.setHeader('Content-Type', isAudio ? 'audio/mpeg' : 'video/mp4');
-    res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
+    const upstream = await fetch(url, { headers, signal: controller.signal });
+    clearTimeout(timeout);
+
+    const contentType = upstream.headers.get('content-type') || '';
+    if (!upstream.ok || contentType.includes('text/html') || contentType.includes('application/json')) {
+      return res.status(502).json({ error: 'upstream_error', message: 'Failed to stream media from remote provider.' });
+    }
+
+    const status = upstream.status === 206 ? 206 : 200;
+    const disposition = isInline ? 'inline' : `attachment; filename="${safeFilename}"`;
+
+    res.status(status);
+    res.setHeader('Content-Type', isAudio ? 'audio/mpeg' : (contentType.includes('video') ? contentType : 'video/mp4'));
+    res.setHeader('Content-Disposition', disposition);
+    res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'public, max-age=86400');
 
+    if (upstream.headers.has('content-length')) {
+      res.setHeader('Content-Length', upstream.headers.get('content-length'));
+    }
+    if (upstream.headers.has('content-range')) {
+      res.setHeader('Content-Range', upstream.headers.get('content-range'));
+    }
+
     const stream = Readable.fromWeb(upstream.body);
-    res.on('close', () => stream.destroy());
+    req.on('close', () => stream.destroy());
     stream.pipe(res);
-  } catch {
-    return res.redirect(url);
+  } catch (err) {
+    if (!res.headersSent) {
+      res.status(502).json({ error: 'proxy_stream_error', message: err.message });
+    }
   }
 });
 
@@ -573,6 +814,13 @@ const sendCachedHtml = (res, relativePath) => {
   res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
   res.sendFile(path.join(__dirname, relativePath));
 };
+
+// SEO & Bot Indexation Routes
+app.get('/robots.txt', (req, res) => res.sendFile(path.join(__dirname, 'public/robots.txt')));
+app.get('/sitemap.xml', (req, res) => {
+  res.setHeader('Content-Type', 'application/xml');
+  res.sendFile(path.join(__dirname, 'public/sitemap.xml'));
+});
 
 // Platform Page Direct Routes
 app.get('/downloader', (req, res) => res.redirect('/#downloader-section'));

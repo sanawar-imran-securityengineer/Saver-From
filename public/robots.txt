@@ -1,0 +1,8 @@
+# SaverFrom Robots.txt
+User-agent: *
+Allow: /
+Allow: /static/
+Allow: /pages/
+
+# Sitemap
+Sitemap: https://saverfrom.com/sitemap.xml

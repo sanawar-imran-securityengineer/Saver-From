@@ -92,6 +92,33 @@ docker compose up -d --build
 
 ---
 
+## طریقہ نمبر 4: Hostinger Python / FastAPI (اگر آپ Python استعمال کرنا چاہیں)
+
+پروجیکٹ میں Python اور FastAPI کے لیے `main.py` اور `requirements.txt` بھی مکمل شامل ہیں:
+
+1. **Hostinger Cloud / VPS پر Python ماحول فعال کریں**:
+   ```bash
+   pip install -r requirements.txt
+   uvicorn main:app --host 0.0.0.0 --port 3000 --workers 4
+   ```
+2. یا PM2 کے ذریعے بیک گراؤنڈ میں چلائیں:
+   ```bash
+   pm2 start "uvicorn main:app --host 0.0.0.0 --port 3000 --workers 4" --name saverfrom-fastapi
+   ```
+
+---
+
+## میڈیا پلیئر اور FFmpeg سپورٹ (Hostinger VPS)
+
+اگر آپ اپنے VPS پر میڈیا پروسیسنگ اور ہائی سپیڈ ریمکسنگ چاہتے ہیں تو ایک کمانڈ سے FFmpeg انسٹال کر سکتے ہیں:
+```bash
+sudo apt update && sudo apt install -y ffmpeg
+```
+SaverFrom کا سرور خود بخود HTTP Range Requests (بائٹ سٹریمنگ) کو ہینڈل کرتا ہے جس سے یوزر ویڈیو کو ڈاؤنلوڈ کیے بغیر آن لائن پلے، فارورڈ اور ریوائنڈ (Seek/Scrub) کر سکتا ہے۔
+
+---
+
 ## پورٹ کی معلومات
 - پروجیکٹ خود بخود Hostinger کے ماحول سے `PORT` ویری ایبل کو ڈیٹیکٹ کرتا ہے۔ اگر پورٹ سیٹ نہ ہو تو یہ پورٹ `3000` پر چلتا ہے۔
-- تمام سٹیٹک پیجز (`/youtube`, `/tiktok`, `/instagram`, وغیرہ) پہلے ہی مکمل تیار اور روٹ شدہ ہیں۔
+- تمام سٹیٹک پیجز (`/youtube`, `/tiktok`, `/instagram`, `/blog`, وغیرہ) پہلے ہی مکمل تیار اور روٹ شدہ ہیں۔
+- `robots.txt` اور `sitemap.xml` خود بخود سرچ انجنز (Google, Bing) کے لیے کنفیگرڈ ہیں۔

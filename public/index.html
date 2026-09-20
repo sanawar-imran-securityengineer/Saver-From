@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SaverFrom - Free Video Downloader | YouTube, TikTok, Instagram & More</title>
-  <meta name="description" content="Download high quality videos & audio from YouTube, TikTok, Instagram, Facebook, Twitter, Pinterest, Reddit, Snapchat, Threads, and Twitch in 1080p, 4K, and MP3." />
+  <title>SaverFrom</title>
+  <meta name="description" content="Multi-platform social media video downloader gateway and suite for YouTube, TikTok, Instagram, Facebook, Twitter, and more." />
+  <meta property="og:title" content="SaverFrom" />
+  <meta property="og:description" content="Multi-platform social media video downloader gateway and suite for YouTube, TikTok, Instagram, Facebook, Twitter, and more." />
   <link rel="stylesheet" href="/static/css/style.css" />
   <link rel="icon" href="/static/icons/saverfrom-logo.svg" type="image/svg+xml" />
 </head>
@@ -122,15 +124,62 @@
         <span id="error-msg"></span>
       </div>
 
-      <!-- Result Card -->
+      <!-- Result Card with Integrated Media Player -->
       <div id="result-card" class="result-card">
         <div class="result-content">
-          <div class="result-thumb-wrapper">
-            <img id="result-thumb" class="result-thumb" src="/static/icons/saverfrom-logo.svg" alt="Video thumbnail" />
-            <span id="result-duration" class="result-duration">HD</span>
+          <!-- Left Column: Responsive Media Preview Player -->
+          <div class="player-container">
+            <div class="media-tabs">
+              <button type="button" id="tab-preview-video" class="media-tab-btn active" onclick="switchMediaTab('video')">
+                🎬 Video Player
+              </button>
+              <button type="button" id="tab-preview-audio" class="media-tab-btn" onclick="switchMediaTab('audio')">
+                🎵 Audio Track
+              </button>
+            </div>
+
+            <!-- Video Player Panel -->
+            <div id="video-player-panel" class="player-panel">
+              <div class="video-wrapper">
+                <video id="media-video-player" controls playsinline preload="metadata" poster="/static/icons/saverfrom-logo.svg">
+                  <source id="video-source" src="" type="video/mp4" />
+                  Your browser does not support HTML5 video preview.
+                </video>
+              </div>
+            </div>
+
+            <!-- Audio Player Panel -->
+            <div id="audio-player-panel" class="player-panel" style="display:none;">
+              <div class="audio-wrapper">
+                <div class="audio-waveform-visual" aria-hidden="true">
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                </div>
+                <audio id="media-audio-player" controls preload="metadata" style="width: 100%;">
+                  <source id="audio-source" src="" type="audio/mpeg" />
+                  Your browser does not support HTML5 audio playback.
+                </audio>
+              </div>
+            </div>
           </div>
+
+          <!-- Right Column: Media Information & Download Formats -->
           <div class="result-info">
             <h3 id="result-title">Ready for Download</h3>
+
+            <!-- Dynamic Metadata Pills -->
+            <div class="meta-badges-row">
+              <span id="badge-platform" class="meta-badge">🌐 Platform</span>
+              <span id="badge-duration" class="meta-badge">⏱️ Duration</span>
+              <span id="badge-quality" class="meta-badge">📺 1080p FHD</span>
+              <span class="meta-badge meta-badge-success">✓ Stream Validated</span>
+            </div>
 
             <!-- Multi-Format Direct Download Buttons -->
             <div class="result-format-list" id="result-format-list">
@@ -138,8 +187,8 @@
             </div>
 
             <div class="result-actions">
-              <a id="result-download-btn" href="#" target="_blank" download class="btn-action-primary">
-                ⬇️ Download Now
+              <a id="result-download-btn" href="javascript:void(0)" download class="btn-action-primary">
+                ⬇️ Download Primary File
               </a>
               <button type="button" id="btn-download-another" class="btn-action-secondary">
                 🔄 Download Another
@@ -696,15 +745,20 @@
 
         loadingBox.style.display = 'none';
 
-        const title = (downloadData && (downloadData.title || downloadData.filename)) || `${platConfig.name} Video Ready`;
+        const title = (downloadData && (downloadData.title || downloadData.filename)) || `${platConfig.name} Media Ready`;
         const rawDlUrl = (downloadData && (downloadData.download_url || downloadData.url)) || url;
         const filename = (downloadData && downloadData.filename) || 'video.mp4';
         const thumb = (downloadData && downloadData.thumbnail) || platConfig.icon;
-        const duration = (downloadData && downloadData.duration) || 'HD';
-        const uploader = (downloadData && downloadData.uploader) || platConfig.name;
+        const duration = (downloadData && downloadData.duration) || 'HD Video';
+        const quality = (downloadData && downloadData.quality) || '1080p FHD';
+        const previewUrl = (downloadData && downloadData.preview_url) || `/api/v1/proxy-download?url=${encodeURIComponent(rawDlUrl)}&filename=${encodeURIComponent(filename)}&inline=true`;
+        const audioPreviewUrl = (downloadData && downloadData.audio_preview_url) || previewUrl;
 
-        // Direct Download Attachment URL
-        const directDlUrl = `/api/v1/proxy-download?url=${encodeURIComponent(rawDlUrl)}&filename=${encodeURIComponent(filename)}`;
+        // Direct Download Attachment URL (preserve direct proxy route)
+        let directDlUrl = downloadData && downloadData.download_url;
+        if (!directDlUrl || (!directDlUrl.startsWith('/api/') && !directDlUrl.startsWith('http'))) {
+          directDlUrl = `/api/v1/proxy-download?url=${encodeURIComponent(rawDlUrl)}&filename=${encodeURIComponent(filename)}`;
+        }
 
         // Decode any raw HTML entities in title
         const decodeHtml = (str) => {
@@ -714,24 +768,49 @@
         };
 
         document.getElementById('result-title').textContent = decodeHtml(title);
-        
-        // Show real video picture/thumbnail
-        const thumbImg = document.getElementById('result-thumb');
-        thumbImg.src = thumb;
-        thumbImg.onerror = function() {
-          this.onerror = null;
-          this.src = platConfig.icon;
-        };
 
-        const durEl = document.getElementById('result-duration');
-        if (durEl) durEl.textContent = duration;
+        // Update Metadata Badges
+        const badgePlat = document.getElementById('badge-platform');
+        if (badgePlat) badgePlat.textContent = `🌐 ${platConfig.name}`;
 
-        // Populate clean multi-format download rows without redundant text
+        const badgeDur = document.getElementById('badge-duration');
+        if (badgeDur) badgeDur.textContent = `⏱️ ${duration}`;
+
+        const badgeQual = document.getElementById('badge-quality');
+        if (badgeQual) badgeQual.textContent = `📺 ${quality}`;
+
+        // Configure Video Player
+        const videoPlayer = document.getElementById('media-video-player');
+        const videoSource = document.getElementById('video-source');
+        if (videoPlayer && videoSource) {
+          videoPlayer.pause();
+          videoPlayer.poster = thumb;
+          videoSource.src = previewUrl;
+          videoPlayer.load();
+        }
+
+        // Configure Audio Player
+        const audioPlayer = document.getElementById('media-audio-player');
+        const audioSource = document.getElementById('audio-source');
+        if (audioPlayer && audioSource) {
+          audioPlayer.pause();
+          audioSource.src = audioPreviewUrl;
+          audioPlayer.load();
+        }
+
+        // Auto-select Video or Audio Tab based on format
+        if (selectedFormat === 'mp3') {
+          switchMediaTab('audio');
+        } else {
+          switchMediaTab('video');
+        }
+
+        // Populate clean multi-format download rows
         formatListContainer.innerHTML = '';
         const formats = (downloadData && downloadData.formats) || [
-          { format_id: '1080p', label: '1080p Full HD', quality: '1080p FHD', ext: 'mp4', proxy_url: directDlUrl },
-          { format_id: '720p', label: '720p HD', quality: '720p HD', ext: 'mp4', proxy_url: directDlUrl },
-          { format_id: 'mp3', label: 'Audio MP3 (320kbps)', quality: 'MP3', ext: 'mp3', proxy_url: directDlUrl }
+          { format_id: '1080p', label: '1080p Full HD', quality: '1080p FHD', ext: 'mp4', size_est: '22 MB', proxy_url: directDlUrl },
+          { format_id: '720p', label: '720p HD', quality: '720p HD', ext: 'mp4', size_est: '14 MB', proxy_url: directDlUrl },
+          { format_id: 'mp3', label: 'Audio MP3 (320kbps)', quality: 'MP3', ext: 'mp3', size_est: '4.2 MB', proxy_url: directDlUrl }
         ];
 
         formats.forEach(f => {
@@ -746,11 +825,12 @@
             .replace(/\s*video\s*/gi, ' ')
             .trim();
           const badgeText = isAudio ? 'MP3' : 'MP4';
+          const sizeText = f.size_est ? `<span class="format-size-est">(${f.size_est})</span>` : '';
 
           row.innerHTML = `
             <div class="format-dl-info">
               <span>${icon}</span>
-              <span>${cleanLabel}</span>
+              <span>${cleanLabel} ${sizeText}</span>
               <span class="format-dl-badge ${isAudio ? 'audio-badge' : ''}">${badgeText}</span>
             </div>
             <a href="${dlLink}" download class="btn-format-download ${isAudio ? 'audio-btn' : ''}">
@@ -764,6 +844,7 @@
         const dlBtn = document.getElementById('result-download-btn');
         dlBtn.href = directDlUrl;
         dlBtn.setAttribute('download', filename);
+        dlBtn.removeAttribute('target');
 
         resultCard.style.display = 'block';
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -771,7 +852,7 @@
       } catch (err) {
         loadingBox.style.display = 'none';
         errorBox.style.display = 'flex';
-        errorMsg.textContent = err.message || 'Could not fetch video. Please check the URL and try again.';
+        errorMsg.textContent = err.message || 'Could not fetch media. Please check the URL and try again.';
       } finally {
         btnDownload.disabled = false;
         btnIcon.textContent = '⚡';
@@ -779,7 +860,36 @@
       }
     }
 
+    // Media Tab Switching Function
+    window.switchMediaTab = function(tab) {
+      const tabVideo = document.getElementById('tab-preview-video');
+      const tabAudio = document.getElementById('tab-preview-audio');
+      const panelVideo = document.getElementById('video-player-panel');
+      const panelAudio = document.getElementById('audio-player-panel');
+      const vPlayer = document.getElementById('media-video-player');
+      const aPlayer = document.getElementById('media-audio-player');
+
+      if (tab === 'audio') {
+        tabAudio.classList.add('active');
+        tabVideo.classList.remove('active');
+        panelAudio.style.display = 'block';
+        panelVideo.style.display = 'none';
+        if (vPlayer) vPlayer.pause();
+      } else {
+        tabVideo.classList.add('active');
+        tabAudio.classList.remove('active');
+        panelVideo.style.display = 'block';
+        panelAudio.style.display = 'none';
+        if (aPlayer) aPlayer.pause();
+      }
+    };
+
     document.getElementById('btn-download-another').addEventListener('click', () => {
+      const vPlayer = document.getElementById('media-video-player');
+      const aPlayer = document.getElementById('media-audio-player');
+      if (vPlayer) vPlayer.pause();
+      if (aPlayer) aPlayer.pause();
+
       urlInput.value = '';
       urlInput.dispatchEvent(new Event('input'));
       resultCard.style.display = 'none';

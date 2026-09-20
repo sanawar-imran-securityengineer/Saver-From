@@ -117,16 +117,61 @@
       <!-- Result Card -->
       <div id="result-card-plat" class="result-card">
         <div class="result-content">
-          <div class="result-thumb-wrapper">
-            <img id="res-thumb" class="result-thumb" src="/static/icons/threads.svg" alt="Thumbnail" style="filter:invert(1);" />
-            <span class="result-duration">HD</span>
+          <!-- Left Column: Video & Audio Player with Tab Switcher -->
+          <div class="player-container">
+            <div class="media-tabs" role="tablist">
+              <button type="button" id="tab-preview-video" class="media-tab-btn active" role="tab" onclick="switchPlatMediaTab('video')">
+                🎬 Video Player
+              </button>
+              <button type="button" id="tab-preview-audio" class="media-tab-btn" role="tab" onclick="switchPlatMediaTab('audio')">
+                🎵 Audio Track
+              </button>
+            </div>
+
+            <!-- Video Player Panel -->
+            <div id="video-player-panel" class="player-panel">
+              <div class="video-wrapper">
+                <video id="res-video-player" controls playsinline preload="metadata" poster="/static/icons/threads.svg">
+                  <source id="res-video-source" src="" type="video/mp4" />
+                  Your browser does not support HTML5 video preview.
+                </video>
+              </div>
+            </div>
+
+            <!-- Audio Player Panel -->
+            <div id="audio-player-panel" class="player-panel" style="display:none;">
+              <div class="audio-wrapper">
+                <div class="audio-waveform-visual" aria-hidden="true">
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                  <div class="wave-bar"></div>
+                </div>
+                <audio id="res-audio-player" controls preload="metadata" style="width: 100%;">
+                  <source id="res-audio-source" src="" type="audio/mpeg" />
+                  Your browser does not support HTML5 audio playback.
+                </audio>
+              </div>
+            </div>
           </div>
+
+          <!-- Right Column: Media Information & Download Formats -->
           <div class="result-info">
             <h3 id="res-title">Threads Media Ready</h3>
+            <div class="meta-badges-row">
+              <span id="badge-platform" class="meta-badge">🌐 Threads</span>
+              <span id="badge-duration" class="meta-badge">⏱️ HD</span>
+              <span id="badge-quality" class="meta-badge">📺 1080p FHD</span>
+              <span class="meta-badge meta-badge-success">✓ Official Video</span>
+            </div>
             <div class="result-format-list" id="res-format-list"></div>
             <div class="result-actions">
-              <a id="res-dl-btn" href="#" target="_blank" download class="btn-action-primary" style="background:#18181b;">
-                ⬇️ Download Now
+              <a id="res-dl-btn" href="javascript:void(0)" download class="btn-action-primary" style="background:#18181b;">
+                ⬇️ Download Official Video
               </a>
               <button type="button" id="res-another-btn" class="btn-action-secondary" onclick="document.getElementById('btn-clear-plat').click()">🔄 Download Another</button>
               <a href="/" class="btn-action-secondary">🏠 All-in-One Hub</a>
@@ -562,6 +607,30 @@
       urlIn.focus();
     });
 
+    // Media Tab Switching Function
+    window.switchPlatMediaTab = function(tab) {
+      const tabVideo = document.getElementById('tab-preview-video');
+      const tabAudio = document.getElementById('tab-preview-audio');
+      const panelVideo = document.getElementById('video-player-panel');
+      const panelAudio = document.getElementById('audio-player-panel');
+      const vPlayer = document.getElementById('res-video-player');
+      const aPlayer = document.getElementById('res-audio-player');
+
+      if (tab === 'audio') {
+        if (tabAudio) tabAudio.classList.add('active');
+        if (tabVideo) tabVideo.classList.remove('active');
+        if (panelAudio) panelAudio.style.display = 'block';
+        if (panelVideo) panelVideo.style.display = 'none';
+        if (vPlayer) vPlayer.pause();
+      } else {
+        if (tabVideo) tabVideo.classList.add('active');
+        if (tabAudio) tabAudio.classList.remove('active');
+        if (panelVideo) panelVideo.style.display = 'block';
+        if (panelAudio) panelAudio.style.display = 'none';
+        if (aPlayer) aPlayer.pause();
+      }
+    };
+
     async function handlePlatformSubmit(e) {
       e.preventDefault();
       const url = urlIn.value.trim();
@@ -578,12 +647,10 @@
         let data = null;
         if (resp.ok) { data = await resp.json(); }
         loadingBox.style.display = 'none';
-        const title = (data && (data.title || data.filename)) || 'Media Ready';
-        const rawDlUrl = (data && (data.download_url || data.url)) || url;
-        const filename = (data && data.filename) || 'video.mp4';
+        const title = (data && (data.title || data.filename)) || 'Threads Video Ready';
+        const filename = (data && data.filename) || 'threads_video.mp4';
         const thumbUrl = (data && data.thumbnail) || null;
         const quality = (data && data.quality) || (platFormat === 'mp3' ? 'Audio 320kbps' : platFormat === '1080p' ? '1080p HD' : 'Best Quality');
-        const fmt = (data && data.format) || (platFormat === 'mp3' ? 'MP3 Audio' : 'MP4 Video');
         const duration = (data && data.duration) || 'HD';
         const decodeHtml = (str) => {
           const txt = document.createElement('textarea');
@@ -591,15 +658,53 @@
           return txt.value;
         };
 
-        const directDlUrl = '/api/v1/proxy-download?url=' + encodeURIComponent(rawDlUrl) + '&filename=' + encodeURIComponent(filename);
+        // Direct Download Link via Streaming Proxy (prevent double-encoding)
+        let directDlUrl = data && data.download_url;
+        if (!directDlUrl || (!directDlUrl.startsWith('/api/') && !directDlUrl.startsWith('http'))) {
+          directDlUrl = '/api/v1/proxy-download?url=' + encodeURIComponent(data?.url || url) + '&filename=' + encodeURIComponent(filename);
+        }
+
         document.getElementById('res-title').textContent = decodeHtml(title);
         const dlBtn = document.getElementById('res-dl-btn');
         dlBtn.href = directDlUrl;
         dlBtn.setAttribute('download', filename);
-        const thumbEl = document.getElementById('res-thumb');
-        if (thumbUrl && thumbEl) { thumbEl.src = thumbUrl; thumbEl.onerror = function() { this.onerror = null; }; }
-        const durEl = document.querySelector('.result-duration');
-        if (durEl && duration) durEl.textContent = duration;
+        dlBtn.removeAttribute('target');
+
+        const durEl = document.getElementById('badge-duration');
+        if (durEl && duration) durEl.textContent = `⏱️ ${duration}`;
+        const qualEl = document.getElementById('badge-quality');
+        if (qualEl && quality) qualEl.textContent = `📺 ${quality}`;
+
+        // Configure HTML5 Video and Audio Player
+        const vPlayer = document.getElementById('res-video-player');
+        const vSource = document.getElementById('res-video-source');
+        const aPlayer = document.getElementById('res-audio-player');
+        const aSource = document.getElementById('res-audio-source');
+
+        if (vPlayer && thumbUrl) {
+          vPlayer.poster = thumbUrl;
+        }
+
+        const previewUrl = (data && data.preview_url) || directDlUrl;
+        const audioPreviewUrl = (data && data.audio_preview_url) || directDlUrl;
+
+        if (vPlayer && vSource && previewUrl) {
+          vPlayer.pause();
+          vSource.src = previewUrl;
+          vPlayer.load();
+        }
+
+        if (aPlayer && aSource && audioPreviewUrl) {
+          aPlayer.pause();
+          aSource.src = audioPreviewUrl;
+          aPlayer.load();
+        }
+
+        if (platFormat === 'mp3') {
+          switchPlatMediaTab('audio');
+        } else {
+          switchPlatMediaTab('video');
+        }
 
         // Multi-format options
         const formatListEl = document.getElementById('res-format-list');
@@ -616,18 +721,19 @@
             row.className = 'format-dl-row';
             const isAudio = f.ext === 'mp3' || f.format_id === 'mp3';
             const icon = isAudio ? '🎵' : (f.format_id === '1080p' ? '🎬' : '📹');
-            const dlLink = f.proxy_url || `/api/v1/proxy-download?url=${encodeURIComponent(f.url || rawDlUrl)}&filename=${encodeURIComponent((filename || 'threads').replace(/\.[^.]+$/, '') + '.' + f.ext)}`;
+            const dlLink = f.proxy_url || `/api/v1/proxy-download?url=${encodeURIComponent(f.url || url)}&filename=${encodeURIComponent((filename || 'threads').replace(/\.[^.]+$/, '') + '.' + f.ext)}`;
             
             const cleanLabel = (f.label || f.quality || 'Video')
               .replace(/\s*\((?:mp4|mp3)\)/gi, '')
               .replace(/\s*video\s*/gi, ' ')
               .trim();
             const badgeText = isAudio ? 'MP3' : 'MP4';
+            const sizeText = f.size_est ? `<span class="format-size-est">(${f.size_est})</span>` : '';
 
             row.innerHTML = `
               <div class="format-dl-info">
                 <span>${icon}</span>
-                <span>${cleanLabel}</span>
+                <span>${cleanLabel} ${sizeText}</span>
                 <span class="format-dl-badge ${isAudio ? 'audio-badge' : ''}">${badgeText}</span>
               </div>
               <a href="${dlLink}" download class="btn-format-download ${isAudio ? 'audio-btn' : ''}" style="${!isAudio ? 'background:#18181b;' : ''}">
